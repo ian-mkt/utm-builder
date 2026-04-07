@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UTM 빌더 — 구름 마케팅</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Pretendard:wght@400;500;600&display=swap');
+
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222222;
+    --border: #2e2e2e;
+    --border2: #3a3a3a;
+    --text: #e8e8e8;
+    --text2: #888;
+    --text3: #555;
+    --accent: #c8f135;
+    --accent2: #a0d020;
+    --accent-dim: rgba(200, 241, 53, 0.08);
+    --accent-dim2: rgba(200, 241, 53, 0.15);
+    --red: #ff4d4d;
+    --blue: #4d9fff;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'Pretendard', -apple-system, sans-serif;
+    --radius: 6px;
+    --radius-lg: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 52px;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    z-index: 100;
+  }
+  .header-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .header-logo span { color: var(--text2); }
+  .header-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--text2);
+    cursor: pointer;
+  }
+  .header-user:hover { color: var(--text); }
+  .user-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  /* TABS */
+  .tabs {
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    gap: 0;
+  }
+  .tab {
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text3);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .tab:hover { color: var(--text2); }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* MAIN */
+  .main { padding: 32px; max-width: 960px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* SECTION */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text3);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  /* FORM ELEMENTS */
+  .field { margin-bottom: 16px; }
+  .field-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text2);
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+  .field-label .required {
+    color: var(--accent);
+    font-size: 10px;
+  }
+  .field-label .param-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    background: var(--surface2);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+
+  select, input[type="text"], textarea {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 9px 12px;
+    outline: none;
+    transition: border-color 0.15s;
+    appearance: none;
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23555' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+    cursor: pointer;
+  }
+  select:focus, input[type="text"]:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+  }
+  select option { background: var(--surface2); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  /* BUTTONS */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border-radius: var(--radius);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0f0f0f;
+  }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border2);
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--border2); }
+  .btn-danger {
+    background: transparent;
+    color: var(--red);
+    border: 1px solid transparent;
+  }
+  .btn-danger:hover { border-color: var(--red); background: rgba(255,77,77,0.08); }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+  /* RESULT BOX */
+  .result-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-top: 24px;
+  }
+  .result-url {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    word-break: break-all;
+    line-height: 1.8;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: var(--accent-dim);
+    border-radius: var(--radius);
+    border: 1px solid rgba(200,241,53,0.2);
+  }
+  .result-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* MULTI URL */
+  .multi-url-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(200,241,53,0.15);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+  }
+  .multi-url-item .url-text {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    word-break: break-all;
+    flex: 1;
+  }
+
+  /* TOGGLE ROW */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .toggle-row .field { flex: 1; margin-bottom: 0; }
+  .lock-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--text3);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+    margin-top: 22px;
+  }
+  .lock-btn:hover { border-color: var(--border2); color: var(--text2); }
+  .lock-btn.locked { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
+
+  /* MULTI VALUES INPUT */
+  .multi-input-area {
+    background: var(--surface2);
+    border: 1px dashed var(--border2);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    margin-top: 6px;
+  }
+  .multi-input-area .hint {
+    font-size: 11px;
+    color: var(--text3);
+    margin-bottom: 6px;
+  }
+  .multi-tag-input {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text);
+  }
+  .tag .remove-tag {
+    cursor: pointer;
+    color: var(--text3);
+    font-size: 14px;
+    line-height: 1;
+  }
+  .tag .remove-tag:hover { color: var(--red); }
+  .tag-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text);
+    width: 120px;
+    padding: 3px 0;
+  }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  /* AI TAB */
+  .ai-prompt-area {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .ai-result {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-top: 24px;
+  }
+  .ai-result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    background: var(--accent-dim);
+    border: 1px solid rgba(200,241,53,0.25);
+    padding: 3px 8px;
+    border-radius: 20px;
+  }
+  .ai-badge::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .ai-field-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .ai-field-row:last-child { border-bottom: none; }
+  .ai-field-key {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text2);
+  }
+  .ai-field-val {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+  }
+  .ai-field-val input {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 4px 8px;
+    width: 100%;
+  }
+
+  /* LOADING */
+  .loading {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    color: var(--text2);
+    font-size: 13px;
+    padding: 16px 0;
+  }
+  .loading.show { display: flex; }
+  .loading-dots span {
+    display: inline-block;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: bounce 1.2s ease-in-out infinite;
+  }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce {
+    0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+    40% { transform: translateY(-4px); opacity: 1; }
+  }
+
+  /* ARCHIVE TABLE */
+  .archive-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    gap: 12px;
+  }
+  .archive-search input {
+    width: 280px;
+    font-size: 12px;
+    padding: 7px 12px;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  thead tr {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 500;
+    color: var(--text2);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface); }
+  .td-mono {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text2);
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .td-url {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .td-actions { display: flex; gap: 4px; white-space: nowrap; }
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text3);
+  }
+  .empty-state p { font-size: 13px; margin-top: 8px; }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    width: 480px;
+    max-width: 90vw;
+  }
+  .modal h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 24px;
+  }
+
+  /* SETTINGS */
+  .settings-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 24px;
+  }
+  .api-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-family: var(--mono);
+  }
+  .api-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--text3);
+  }
+  .api-dot.ok { background: var(--accent); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--text);
+    z-index: 9999;
+    transform: translateY(10px);
+    opacity: 0;
+    transition: all 0.2s;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-color: var(--accent); color: var(--accent); }
+
+  /* QR */
+  .qr-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+  }
+  #qr-canvas { border-radius: var(--radius); }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-logo">UTM<span>/</span>BUILDER</div>
+  <div class="header-user" onclick="openSettings()">
+    <div class="user-dot"></div>
+    <span id="username-display">설정 필요</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="tab active" onclick="switchTab(0)">UTM 추천</div>
+  <div class="tab" onclick="switchTab(1)">UTM 빌더</div>
+  <div class="tab" onclick="switchTab(2)">아카이브</div>
+</nav>
+
+<main class="main">
+
+  <!-- TAB 1: AI 추천 -->
+  <div class="tab-panel active" id="panel-0">
+    <div class="settings-bar">
+      <div class="api-status">
+        <div class="api-dot" id="api-dot"></div>
+        <span id="api-status-text">API 키 미설정</span>
+      </div>
+    </div>
+
+    <div class="ai-prompt-area">
+      <div class="section-label">컨텍스트 설정</div>
+      <div class="grid-2" style="margin-bottom:16px;">
+        <div class="field">
+          <div class="field-label">사업 구분 <span class="required">필수</span></div>
+          <select id="ai-brand">
+            <option value="">선택하세요</option>
+            <option value="deepdive">딥다이브 (deepdive)</option>
+            <option value="goormthoninjeju">구름톤인제주 (goormthoninjeju)</option>
+            <option value="goormthon">구름톤 (goormthon)</option>
+            <option value="goormthon-univ">구름톤 유니브 (goormthon-univ)</option>
+            <option value="techup">테크업 (techup)</option>
+            <option value="profect">프로펙트 (profect)</option>
+            <option value="edu">구름 에듀 (edu)</option>
+            <option value="ide">구름 IDE (ide)</option>
+            <option value="level">구름 레벨 (level)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">상황 설명 <span class="required">필수</span></div>
+        <textarea id="ai-prompt" placeholder="예: 구름톤인제주 17기 오픈을 알리는 인스타그램 피드 소재를 만들려고 해"></textarea>
+      </div>
+
+      <div class="field">
+        <div class="field-label">랜딩 URL <span class="required">필수</span></div>
+        <input type="text" id="ai-landing-url" placeholder="https://deepdive.goorm.io">
+      </div>
+
+      <button class="btn btn-primary" onclick="runAIRecommend()" style="width:100%; justify-content:center;">
+        AI 추천 받기
+      </button>
+    </div>
+
+    <div class="loading" id="ai-loading">
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+      <span>UTM 값 분석 중...</span>
+    </div>
+
+    <div class="ai-result" id="ai-result" style="display:none;">
+      <div class="ai-result-header">
+        <div class="section-label" style="margin:0;">추천 결과</div>
+        <div class="ai-badge">AI 추천</div>
+      </div>
+
+      <div class="ai-field-row">
+        <div class="ai-field-key">utm_source</div>
+        <input type="text" class="ai-field-val" id="res-source" style="background:transparent;border:1px solid var(--border);border-radius:4px;">
+      </div>
+      <div class="ai-field-row">
+        <div class="ai-field-key">utm_medium</div>
+        <input type="text" class="ai-field-val" id="res-medium" style="background:transparent;border:1px solid var(--border);border-radius:4px;">
+      </div>
+      <div class="ai-field-row">
+        <div class="ai-field-key">utm_campaign</div>
+        <input type="text" class="ai-field-val" id="res-campaign" style="background:transparent;border:1px solid var(--border);border-radius:4px;">
+      </div>
+      <div class="ai-field-row">
+        <div class="ai-field-key">utm_content</div>
+        <input type="text" class="ai-field-val" id="res-content" style="background:transparent;border:1px solid var(--border);border-radius:4px;">
+      </div>
+      <div class="ai-field-row">
+        <div class="ai-field-key">utm_term</div>
+        <input type="text" class="ai-field-val" id="res-term" style="background:transparent;border:1px solid var(--border);border-radius:4px;">
+      </div>
+
+      <div style="margin-top:16px;">
+        <div class="result-url" id="ai-final-url"></div>
+        <div class="result-actions">
+          <button class="btn btn-primary" onclick="copyAIUrl()">URL 복사</button>
+          <button class="btn btn-secondary" onclick="saveAIToArchive()">아카이브 저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: 빌더 -->
+  <div class="tab-panel" id="panel-1">
+
+    <div class="field">
+      <div class="field-label">베이스 URL <span class="required">필수</span></div>
+      <input type="text" id="b-base-url" placeholder="https://deepdive.goorm.io" oninput="buildUrls()">
+    </div>
+
+    <hr class="divider">
+    <div class="section-label">파라미터 설정</div>
+
+    <div id="param-rows"></div>
+
+    <hr class="divider">
+
+    <div style="display:flex; gap:8px; margin-bottom:24px;">
+      <button class="btn btn-primary" onclick="buildUrls()" style="flex:1; justify-content:center;">URL 생성</button>
+    </div>
+
+    <div id="builder-result" style="display:none;">
+      <div class="result-box">
+        <div class="section-label" style="margin-bottom:12px;">생성된 URL</div>
+        <div id="builder-url-list"></div>
+        <div class="result-actions" style="margin-top:12px;">
+          <button class="btn btn-primary" onclick="copyBuilderUrls()">전체 복사</button>
+          <button class="btn btn-secondary" onclick="saveBuilderToArchive()">아카이브 저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: 아카이브 -->
+  <div class="tab-panel" id="panel-2">
+    <div class="archive-toolbar">
+      <div class="archive-search">
+        <input type="text" placeholder="검색 (캠페인, 소스, URL...)" oninput="filterArchive(this.value)">
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="copyAllArchive()">전체 복사</button>
+        <button class="btn btn-ghost btn-sm" onclick="refreshArchive()">새로고침</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>생성일자</th>
+            <th>만든사람</th>
+            <th>사업구분</th>
+            <th>소재명</th>
+            <th>랜딩 URL</th>
+            <th>utm_source</th>
+            <th>utm_medium</th>
+            <th>utm_campaign</th>
+            <th>utm_content</th>
+            <th>utm_term</th>
+            <th>풀 URL</th>
+            <th>단축 URL</th>
+            <th>관리메모</th>
+            <th>액션</th>
+          </tr>
+        </thead>
+        <tbody id="archive-tbody">
+          <tr><td colspan="14"><div class="empty-state"><p>아직 저장된 URL이 없어요</p></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <h3>설정</h3>
+    <div class="field">
+      <div class="field-label">이름</div>
+      <input type="text" id="setting-name" placeholder="홍길동">
+    </div>
+    <div class="field">
+      <div class="field-label">Claude API 키 <span class="param-tag">1탭 AI 추천용</span></div>
+      <input type="text" id="setting-apikey" placeholder="sk-ant-...">
+    </div>
+    <div class="field">
+      <div class="field-label">Google Sheets URL <span class="param-tag">아카이브 연동용</span></div>
+      <input type="text" id="setting-sheets-url" placeholder="Apps Script 웹앱 URL">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeSettings()">취소</button>
+      <button class="btn btn-primary" onclick="saveSettings()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h3>항목 편집</h3>
+    <input type="hidden" id="edit-row-id">
+    <div class="grid-2">
+      <div class="field">
+        <div class="field-label">만든사람</div>
+        <input type="text" id="edit-person">
+      </div>
+      <div class="field">
+        <div class="field-label">사업구분</div>
+        <input type="text" id="edit-brand">
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">소재명</div>
+      <input type="text" id="edit-material">
+    </div>
+    <div class="field">
+      <div class="field-label">관리메모</div>
+      <textarea id="edit-memo" style="min-height:60px;"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeEditModal()">취소</button>
+      <button class="btn btn-primary" onclick="saveEdit()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- QR MODAL -->
+<div class="modal-overlay" id="qr-modal">
+  <div class="modal" style="width:320px; text-align:center;">
+    <h3>QR 코드</h3>
+    <div class="qr-wrap">
+      <div id="qr-loading" style="color:var(--text3);font-size:12px;display:none;">생성 중...</div>
+      <img id="qr-img" width="200" height="200" style="border-radius:8px;display:none;" alt="QR Code">
+      <div id="qr-url-text" style="font-family:var(--mono);font-size:10px;color:var(--text3);word-break:break-all;"></div>
+    </div>
+    <div class="modal-actions" style="justify-content:center;">
+      <button class="btn btn-ghost" onclick="closeQrModal()">닫기</button>
+      <button class="btn btn-primary" onclick="downloadQR()">다운로드</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+// ── DATA ──────────────────────────────────────────────
+const UTM_DATA = {
+  source: {
+    'Paid Ads': ['meta','google','kakao','naver','youtube'],
+    'Partnership': ['shinhancard','incruit','maycan_everytime','boottent'],
+    'Viral': ['everytime','okky','dcinside','blind','ppomppu'],
+    'Owned Media': ['inhouse_edu','inhouse_ide','inhouse_level','inhouse_edu_channel'],
+    'CRM': ['internal'],
+    'Organic Social': ['littly','instagram','facebook','youtube'],
+    '기타': ['inthiswork','kakaotalk','offline']
+  },
+  medium: {
+    'Paid Ads': ['display','display_bizboard','video','cross_pmax','cross_demandgen','vertical_mainbanner'],
+    'Paid Search': ['paidsearch','brandsearch','cpc'],
+    'Partnership': ['affiliate','affiliate_lms','creator','partner'],
+    'PR': ['pr','article'],
+    'Referral': ['referral','invite'],
+    'Viral': ['viral'],
+    'CRM': ['email','sms','alimtalk','message','push'],
+    'Offline': ['offline','offline_poster'],
+    'Owned': ['owned'],
+    'Organic Social': ['social']
+  },
+  campaign_brand: ['deepdive','goormthoninjeju','goormthon','goormthon-univ','techup','profect','edu','ide','level'],
+  campaign_course: ['fullstack','cybersecurity','informationsecurity','cloud-native','cloud-infra','cloud','gen-ai','frontend','backend','product-design','product-management','fullstack-fintech','service-design-fintech','fullstack-pt','cybersecurity-pt','informationsecurity-pt','cloud-native-pt','gen-ai-pt','frontend-pt','backend-pt','product-design-pt','product-management-pt'],
+  campaign_promo: ['early-bird','open-alarm','last-chance','discount'],
+  content_position: ['main-banner','middle-banner','search-banner','gnb-btn','floating-btn','popup-modal','blog-cta','footer-link','job-post','msg','body-btn','story','link','thumbnail','sublink','vertical','generic'],
+  content_keyword: ['open','close','early-bird','discount','review','curriculum','apply','benefit','default'],
+  term: ['tgt_retargeting','tgt_nontarget','tgt_developer','tgt_cs-major','tgt_open-alarm','tgt_kakao-friends-all','tgt_kakao-friends-recommend','tgt_goormthon-17-dev-applicant','{keyword}'],
+  content_position: ['main-banner','middle-banner','search-banner','gnb-btn','floating-btn','popup-modal','blog-cta','footer-link','job-post','msg','body-btn','story','link','thumbnail','sublink','vertical','generic'],
+  content_keyword: ['open','close','early-bird','discount','review','curriculum','apply','benefit','default']
+};
+
+// ── STATE ─────────────────────────────────────────────
+let archiveData = [];
+let paramStates = {
+  source: { locked: true, values: [] },
+  medium: { locked: true, values: [] },
+  campaign: { locked: true, values: [] },
+  content: { locked: true, values: [] },
+  term: { locked: true, values: [] }
+};
+
+// ── SETTINGS ──────────────────────────────────────────
+function loadSettings() {
+  const name = localStorage.getItem('utm_username') || '';
+  const apiKey = localStorage.getItem('utm_apikey') || '';
+  const sheetsUrl = localStorage.getItem('utm_sheets_url') || '';
+  document.getElementById('username-display').textContent = name || '설정 필요';
+  updateApiStatus(!!apiKey);
+  return { name, apiKey, sheetsUrl };
+}
+
+function updateApiStatus(hasKey) {
+  const dot = document.getElementById('api-dot');
+  const text = document.getElementById('api-status-text');
+  if (hasKey) {
+    dot.classList.add('ok');
+    text.textContent = 'API 연결됨';
+  } else {
+    dot.classList.remove('ok');
+    text.textContent = 'API 키 미설정';
+  }
+}
+
+function openSettings() {
+  const { name, apiKey, sheetsUrl } = loadSettings();
+  document.getElementById('setting-name').value = name;
+  document.getElementById('setting-apikey').value = apiKey;
+  document.getElementById('setting-sheets-url').value = sheetsUrl;
+  document.getElementById('settings-modal').classList.add('show');
+}
+function closeSettings() {
+  document.getElementById('settings-modal').classList.remove('show');
+}
+function saveSettings() {
+  const name = document.getElementById('setting-name').value.trim();
+  const apiKey = document.getElementById('setting-apikey').value.trim();
+  const sheetsUrl = document.getElementById('setting-sheets-url').value.trim();
+  if (name) localStorage.setItem('utm_username', name);
+  if (apiKey) localStorage.setItem('utm_apikey', apiKey);
+  if (sheetsUrl) localStorage.setItem('utm_sheets_url', sheetsUrl);
+  document.getElementById('username-display').textContent = name || '설정 필요';
+  updateApiStatus(!!apiKey);
+  closeSettings();
+  showToast('설정이 저장됐어요', 'success');
+}
+
+// ── TABS ──────────────────────────────────────────────
+function switchTab(idx) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab-panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+  if (idx === 2) refreshArchive();
+}
+
+// ── SELECT BUILDER ────────────────────────────────────
+function makeSelect(data, placeholder='선택') {
+  let html = `<option value="">${placeholder}</option>`;
+  if (Array.isArray(data)) {
+    data.forEach(v => html += `<option value="${v}">${v}</option>`);
+  } else {
+    Object.entries(data).forEach(([group, vals]) => {
+      html += `<optgroup label="${group}">`;
+      vals.forEach(v => html += `<option value="${v}">${v}</option>`);
+      html += `</optgroup>`;
+    });
+  }
+  return html;
+}
+
+function buildSelectWithCustom(key, data) {
+  return `
+    <div>
+      <select id="b-${key}-select" onchange="handleSelectWithCustom('${key}', this.value)" style="width:100%">
+        <option value="">선택하세요</option>
+        <option value="__custom__">직접 입력...</option>
+        ${makeSelect(data)}
+      </select>
+      <input type="text" id="b-${key}" placeholder="직접 입력" oninput="buildUrls()"
+        style="display:none; margin-top:6px; width:100%;">
+    </div>
+  `;
+}
+
+function handleSelectWithCustom(key, val) {
+  const input = document.getElementById(`b-${key}`);
+  if (val === '__custom__') {
+    input.style.display = 'block';
+    input.focus();
+    input.value = '';
+  } else {
+    input.style.display = 'none';
+    input.value = val;
+  }
+  buildUrls();
+}
+
+// ── PARAM ROWS (TAB 2) ────────────────────────────────
+function initParamRows() {
+  const params = [
+    { key: 'source', label: 'utm_source', required: true, data: UTM_DATA.source },
+    { key: 'medium', label: 'utm_medium', required: true, data: UTM_DATA.medium },
+    { key: 'campaign', label: 'utm_campaign', required: false, data: null },
+    { key: 'content', label: 'utm_content', required: false, data: 'content' },
+    { key: 'term', label: 'utm_term', required: false, data: UTM_DATA.term }
+  ];
+  const container = document.getElementById('param-rows');
+  container.innerHTML = params.map(p => {
+    const inputHtml = p.key === 'campaign'
+      ? buildCampaignInput(p.key)
+      : p.key === 'content'
+        ? buildContentInput()
+        : p.data
+          ? buildSelectWithCustom(p.key, p.data)
+          : `<input type="text" id="b-${p.key}" placeholder="${p.label}" oninput="buildUrls()">`;
+    return `
+      <div class="field" id="field-wrap-${p.key}">
+        <div class="field-label">
+          ${p.label}
+          ${p.required ? '<span class="required">필수</span>' : ''}
+        </div>
+        <div class="toggle-row">
+          <div class="field" style="flex:1;margin-bottom:0;">${inputHtml}</div>
+          <button class="lock-btn locked" id="lock-${p.key}" onclick="toggleLock('${p.key}')">고정</button>
+        </div>
+        <div class="multi-input-area" id="multi-${p.key}" style="display:none;">
+          <div class="hint">Enter로 값 추가 — 고정 해제된 항목은 여러 값을 입력할 수 있어요</div>
+          <div class="multi-tag-input" id="tags-${p.key}">
+            <input class="tag-input" placeholder="값 입력 후 Enter" onkeydown="addTag(event, '${p.key}')">
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function buildCampaignInput(key) {
+  return `
+    <div style="display:flex;gap:6px;align-items:center;">
+      <select id="b-camp-brand" onchange="assembleCampaign()" style="flex:1;">
+        <option value="">브랜드</option>
+        ${UTM_DATA.campaign_brand.map(v=>`<option value="${v}">${v}</option>`).join('')}
+      </select>
+      <select id="b-camp-course" onchange="assembleCampaign()" style="flex:1;">
+        <option value="">과정</option>
+        ${UTM_DATA.campaign_course.map(v=>`<option value="${v}">${v}</option>`).join('')}
+      </select>
+      <input type="text" id="b-camp-num" placeholder="기수" style="width:70px;" oninput="assembleCampaign()">
+      <select id="b-camp-promo" onchange="assembleCampaign()" style="flex:1;">
+        <option value="">프로모션</option>
+        ${UTM_DATA.campaign_promo.map(v=>`<option value="${v}">${v}</option>`).join('')}
+      </select>
+    </div>
+    <input type="text" id="b-campaign" placeholder="조합 결과" style="margin-top:6px; background:var(--surface2);" readonly>
+  `;
+}
+
+function buildContentInput() {
+  return `
+    <div style="display:flex;gap:6px;align-items:center;">
+      <select id="b-cont-position" onchange="assembleContent()" style="flex:1;">
+        <option value="">위치-형태</option>
+        <option value="__custom__">직접 입력...</option>
+        ${UTM_DATA.content_position.map(v=>`<option value="${v}">${v}</option>`).join('')}
+      </select>
+      <select id="b-cont-keyword" onchange="assembleContent()" style="flex:1;">
+        <option value="">식별키워드</option>
+        <option value="__custom__">직접 입력...</option>
+        ${UTM_DATA.content_keyword.map(v=>`<option value="${v}">${v}</option>`).join('')}
+      </select>
+    </div>
+    <div style="display:flex;gap:6px;margin-top:6px;">
+      <input type="text" id="b-cont-position-custom" placeholder="위치-형태 직접 입력" style="display:none;flex:1;" oninput="assembleContent()">
+      <input type="text" id="b-cont-keyword-custom" placeholder="식별키워드 직접 입력" style="display:none;flex:1;" oninput="assembleContent()">
+    </div>
+    <input type="text" id="b-content" placeholder="조합 결과" style="margin-top:6px; background:var(--surface2);" readonly>
+  `;
+}
+
+function assembleContent() {
+  const posSel = document.getElementById('b-cont-position')?.value || '';
+  const kwSel = document.getElementById('b-cont-keyword')?.value || '';
+  const posCust = document.getElementById('b-cont-position-custom');
+  const kwCust = document.getElementById('b-cont-keyword-custom');
+
+  if (posSel === '__custom__') {
+    posCust.style.display = 'block';
+  } else {
+    posCust.style.display = 'none';
+  }
+  if (kwSel === '__custom__') {
+    kwCust.style.display = 'block';
+  } else {
+    kwCust.style.display = 'none';
+  }
+
+  const pos = posSel === '__custom__' ? (posCust?.value || '') : posSel;
+  const kw = kwSel === '__custom__' ? (kwCust?.value || '') : kwSel;
+  const parts = [pos, kw].filter(Boolean);
+  document.getElementById('b-content').value = parts.join('_');
+  buildUrls();
+}
+
+function assembleCampaign() {
+  const brand = document.getElementById('b-camp-brand')?.value || '';
+  const course = document.getElementById('b-camp-course')?.value || '';
+  const num = document.getElementById('b-camp-num')?.value || '';
+  const promo = document.getElementById('b-camp-promo')?.value || '';
+  const parts = [brand, course, num, promo].filter(Boolean);
+  const result = parts.join('_');
+  document.getElementById('b-campaign').value = result;
+  buildUrls();
+}
+
+function toggleLock(key) {
+  const btn = document.getElementById(`lock-${key}`);
+  const multiArea = document.getElementById(`multi-${key}`);
+  const isLocked = btn.classList.contains('locked');
+  if (isLocked) {
+    btn.classList.remove('locked');
+    btn.textContent = '가변';
+    multiArea.style.display = 'block';
+    paramStates[key].locked = false;
+  } else {
+    btn.classList.add('locked');
+    btn.textContent = '고정';
+    multiArea.style.display = 'none';
+    paramStates[key].locked = true;
+    paramStates[key].values = [];
+    document.getElementById(`tags-${key}`).querySelectorAll('.tag').forEach(t => t.remove());
+  }
+  buildUrls();
+}
+
+function addTag(event, key) {
+  if (event.key !== 'Enter') return;
+  const input = event.target;
+  const val = input.value.trim();
+  if (!val) return;
+  const container = document.getElementById(`tags-${key}`);
+  const tag = document.createElement('div');
+  tag.className = 'tag';
+  tag.innerHTML = `<span>${val}</span><span class="remove-tag" onclick="removeTag(this, '${key}')">×</span>`;
+  container.insertBefore(tag, input);
+  paramStates[key].values.push(val);
+  input.value = '';
+  buildUrls();
+}
+
+function removeTag(el, key) {
+  const tag = el.parentElement;
+  const val = tag.querySelector('span').textContent;
+  paramStates[key].values = paramStates[key].values.filter(v => v !== val);
+  tag.remove();
+  buildUrls();
+}
+
+function buildUrls() {
+  const base = document.getElementById('b-base-url')?.value?.trim();
+  if (!base) { document.getElementById('builder-result').style.display = 'none'; return; }
+
+  const getVal = (key) => {
+    const selectEl = document.getElementById(`b-${key}-select`);
+    if (selectEl) {
+      const val = selectEl.value;
+      if (val === '__custom__') {
+        const inputEl = document.getElementById(`b-${key}`);
+        return inputEl ? inputEl.value.trim() : '';
+      }
+      return val;
+    }
+    const el = document.getElementById(`b-${key}`);
+    return el ? el.value.trim() : '';
+  };
+
+  const source = paramStates.source.locked ? getVal('source') : null;
+  const medium = paramStates.medium.locked ? getVal('medium') : null;
+  const campaign = paramStates.campaign.locked ? getVal('campaign') : null;
+  const content = paramStates.content.locked ? getVal('content') : null;
+  const term = paramStates.term.locked ? getVal('term') : null;
+
+  // Collect variable params
+  const varParams = {};
+  ['source','medium','campaign','content','term'].forEach(k => {
+    if (!paramStates[k].locked && paramStates[k].values.length > 0) {
+      varParams[k] = paramStates[k].values;
+    }
+  });
+
+  const fixedParams = { source, medium, campaign, content, term };
+  const urls = generateCombinations(base, fixedParams, varParams);
+
+  const listEl = document.getElementById('builder-url-list');
+  listEl.innerHTML = urls.map(u => `
+    <div class="multi-url-item">
+      <div class="url-text">${u}</div>
+      <button class="btn btn-ghost btn-sm" onclick="copyText('${u.replace(/'/g, "\\'")}')">복사</button>
+    </div>`).join('');
+
+  document.getElementById('builder-result').style.display = 'block';
+}
+
+function generateCombinations(base, fixed, variable) {
+  const varKeys = Object.keys(variable);
+  if (varKeys.length === 0) {
+    return [buildUtmUrl(base, fixed)];
+  }
+  const combinations = [{}];
+  varKeys.forEach(key => {
+    const newCombos = [];
+    combinations.forEach(combo => {
+      variable[key].forEach(val => {
+        newCombos.push({ ...combo, [key]: val });
+      });
+    });
+    combinations.splice(0, combinations.length, ...newCombos);
+  });
+  return combinations.map(varCombo => {
+    const params = { ...fixed, ...varCombo };
+    return buildUtmUrl(base, params);
+  });
+}
+
+function buildUtmUrl(base, params) {
+  const p = new URLSearchParams();
+  if (params.source) p.set('utm_source', params.source);
+  if (params.medium) p.set('utm_medium', params.medium);
+  if (params.campaign) p.set('utm_campaign', params.campaign);
+  if (params.content) p.set('utm_content', params.content);
+  if (params.term) p.set('utm_term', params.term);
+  const qs = p.toString();
+  return qs ? `${base}?${qs}` : base;
+}
+
+function copyBuilderUrls() {
+  const urls = [...document.querySelectorAll('#builder-url-list .url-text')].map(el => el.textContent).join('\n');
+  copyText(urls);
+}
+
+function saveBuilderToArchive() {
+  const urls = [...document.querySelectorAll('#builder-url-list .url-text')].map(el => el.textContent);
+  const name = localStorage.getItem('utm_username') || '';
+  const brand = document.getElementById('b-camp-brand')?.value || '';
+  urls.forEach(url => {
+    const params = parseUtmUrl(url);
+    const landingBase = document.getElementById('b-base-url')?.value?.trim() || '';
+    saveToSheets({ ...params, fullUrl: url, landingUrl: landingBase, person: name, brand, material: '', memo: '' });
+  });
+  showToast(`${urls.length}개 항목을 아카이브에 저장했어요`, 'success');
+}
+
+// ── AI TAB ────────────────────────────────────────────
+async function runAIRecommend() {
+  const apiKey = localStorage.getItem('utm_apikey');
+  if (!apiKey) { showToast('설정에서 API 키를 입력해주세요'); openSettings(); return; }
+  const brand = document.getElementById('ai-brand').value;
+  const prompt = document.getElementById('ai-prompt').value.trim();
+  const landingUrl = document.getElementById('ai-landing-url').value.trim();
+  if (!brand || !prompt || !landingUrl) { showToast('사업 구분, 상황 설명, 랜딩 URL을 모두 입력해주세요'); return; }
+
+  document.getElementById('ai-loading').classList.add('show');
+  document.getElementById('ai-result').style.display = 'none';
+
+  const systemPrompt = `당신은 구름(goorm) 마케팅팀의 UTM 파라미터 전문가입니다.
+아래 UTM 표준값을 기반으로 사용자의 요청에 맞는 UTM 파라미터를 추천하세요.
+
+## utm_source 표준값
+- Paid Ads: meta, google, kakao, naver, youtube
+- Partnership: shinhancard, incruit, maycan_everytime, boottent
+- Viral: everytime, okky, dcinside, blind, ppomppu
+- Owned Media: inhouse_edu, inhouse_ide, inhouse_level, inhouse_edu_channel
+- CRM: internal
+- Organic Social: littly, instagram, facebook, youtube
+
+## utm_medium 표준값
+- Paid Ads: display, display_bizboard, video, cross_pmax, cross_demandgen, vertical_mainbanner
+- Paid Search: paidsearch, brandsearch, cpc
+- Partnership: affiliate, affiliate_lms, creator, partner
+- PR: pr, article
+- Referral: referral, invite
+- Viral: viral
+- CRM: email, sms, alimtalk, message, push
+- Offline: offline, offline_poster
+- Owned: owned
+- Organic Social: social
+
+## utm_campaign 구조
+[브랜드]_[과정]_[기수숫자]_[프로모션(선택)]
+브랜드: deepdive, goormthoninjeju, goormthon, techup, profect, edu, ide, level
+과정: fullstack, cybersecurity, cloud-native, gen-ai, frontend, backend, product-design, product-management 등
+프로모션: early-bird, open-alarm, last-chance, discount
+
+## utm_content 구조
+[위치-형태]_[식별키워드]
+위치형태: main-banner, story, link, msg, body-btn, thumbnail, job-post, popup-modal, vertical, generic
+식별키워드: open, close, early-bird, discount, review, curriculum, apply, benefit, default
+
+## utm_term 구조
+디스플레이/SNS: tgt_[타겟명] (예: tgt_retargeting, tgt_developer)
+검색광고: {keyword}
+
+## 규칙
+- 모든 값은 영문 소문자
+- 단어 연결: 하이픈(-)
+- 정보 구분: 언더바(_)
+
+반드시 아래 JSON 형식으로만 응답하세요 (다른 텍스트 없이):
+{"source":"","medium":"","campaign":"","content":"","term":"","reason":""}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: `사업구분: ${brand}\n상황: ${prompt}` }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    const json = JSON.parse(text.replace(/```json|```/g, '').trim());
+
+    document.getElementById('res-source').value = json.source || '';
+    document.getElementById('res-medium').value = json.medium || '';
+    document.getElementById('res-campaign').value = json.campaign || '';
+    document.getElementById('res-content').value = json.content || '';
+    document.getElementById('res-term').value = json.term || '';
+    updateAIFinalUrl();
+    document.getElementById('ai-result').style.display = 'block';
+  } catch(e) {
+    showToast('API 오류가 발생했어요. API 키를 확인해주세요');
+    console.error(e);
+  } finally {
+    document.getElementById('ai-loading').classList.remove('show');
+  }
+}
+
+function updateAIFinalUrl() {
+  const base = document.getElementById('ai-landing-url').value.trim();
+  const params = {
+    source: document.getElementById('res-source').value,
+    medium: document.getElementById('res-medium').value,
+    campaign: document.getElementById('res-campaign').value,
+    content: document.getElementById('res-content').value,
+    term: document.getElementById('res-term').value
+  };
+  document.getElementById('ai-final-url').textContent = buildUtmUrl(base, params);
+}
+
+['res-source','res-medium','res-campaign','res-content','res-term'].forEach(id => {
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById(id)?.addEventListener('input', updateAIFinalUrl);
+  });
+});
+
+function copyAIUrl() {
+  copyText(document.getElementById('ai-final-url').textContent);
+}
+
+function saveAIToArchive() {
+  const url = document.getElementById('ai-final-url').textContent;
+  const params = parseUtmUrl(url);
+  const name = localStorage.getItem('utm_username') || '';
+  const brand = document.getElementById('ai-brand').value;
+  const aiLandingUrl = document.getElementById('ai-landing-url').value.trim();
+  saveToSheets({ ...params, fullUrl: url, landingUrl: aiLandingUrl, person: name, brand, material: '', memo: '' });
+  showToast('아카이브에 저장했어요', 'success');
+}
+
+// ── ARCHIVE ───────────────────────────────────────────
+async function refreshArchive() {
+  const sheetsUrl = localStorage.getItem('utm_sheets_url');
+  if (!sheetsUrl) {
+    renderArchive([]);
+    return;
+  }
+  try {
+    const res = await fetch(`${sheetsUrl}?action=get`);
+    const data = await res.json();
+    archiveData = data.rows || [];
+    renderArchive(archiveData);
+  } catch(e) {
+    renderArchive(archiveData);
+  }
+}
+
+function renderArchive(rows) {
+  const tbody = document.getElementById('archive-tbody');
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="14"><div class="empty-state"><p>아직 저장된 URL이 없어요</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map((r, i) => `
+    <tr>
+      <td class="td-mono">${r.date || '-'}</td>
+      <td>${r.person || '-'}</td>
+      <td><span style="font-family:var(--mono);font-size:11px;">${r.brand || '-'}</span></td>
+      <td>${r.material || '-'}</td>
+      <td class="td-url" title="${r.landingUrl || ''}">${r.landingUrl || '-'}</td>
+      <td class="td-mono">${r.source || '-'}</td>
+      <td class="td-mono">${r.medium || '-'}</td>
+      <td class="td-mono">${r.campaign || '-'}</td>
+      <td class="td-mono">${r.content || '-'}</td>
+      <td class="td-mono">${r.term || '-'}</td>
+      <td class="td-url" title="${r.fullUrl || ''}">${r.fullUrl || '-'}</td>
+      <td class="td-url">${r.shortUrl ? `<a href="${r.shortUrl}" target="_blank" style="color:var(--accent);">${r.shortUrl}</a>` : '<button class="btn btn-ghost btn-sm" onclick="generateShortUrl('+i+')">생성</button>'}</td>
+      <td>${r.memo || '-'}</td>
+      <td class="td-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openEditModal(${i})">편집</button>
+        <button class="btn btn-ghost btn-sm" onclick="openQrModal('${(r.fullUrl||'').replace(/'/g,"\\'")}')">QR</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteRow(${i})">삭제</button>
+      </td>
+    </tr>`).join('');
+}
+
+function filterArchive(q) {
+  if (!q) { renderArchive(archiveData); return; }
+  const filtered = archiveData.filter(r =>
+    JSON.stringify(r).toLowerCase().includes(q.toLowerCase())
+  );
+  renderArchive(filtered);
+}
+
+function copyAllArchive() {
+  const headers = ['생성일자','만든사람','사업구분','소재명','랜딩URL','utm_source','utm_medium','utm_campaign','utm_content','utm_term','풀URL','단축URL','관리메모'];
+  const rows = archiveData.map(r => [r.date,r.person,r.brand,r.material,r.landingUrl,r.source,r.medium,r.campaign,r.content,r.term,r.fullUrl,r.shortUrl,r.memo].join('\t'));
+  copyText([headers.join('\t'), ...rows].join('\n'));
+}
+
+async function generateShortUrl(idx) {
+  const row = archiveData[idx];
+  if (!row?.fullUrl) return;
+  try {
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent('https://tinyurl.com/api-create.php?url=' + encodeURIComponent(row.fullUrl))}`;
+    const res = await fetch(proxyUrl);
+    const data = await res.json();
+    const shortUrl = data.contents?.trim();
+    archiveData[idx].shortUrl = shortUrl;
+    await saveToSheets({ ...row, action: 'update', rowIndex: idx });
+    renderArchive(archiveData);
+    showToast('단축 URL이 생성됐어요', 'success');
+  } catch(e) {
+    showToast('단축 URL 생성에 실패했어요');
+  }
+}
+
+function deleteRow(idx) {
+  if (!confirm('이 항목을 삭제할까요?')) return;
+  archiveData.splice(idx, 1);
+  saveAllToSheets();
+  renderArchive(archiveData);
+  showToast('삭제됐어요');
+}
+
+function openEditModal(idx) {
+  const r = archiveData[idx];
+  document.getElementById('edit-row-id').value = idx;
+  document.getElementById('edit-person').value = r.person || '';
+  document.getElementById('edit-brand').value = r.brand || '';
+  document.getElementById('edit-material').value = r.material || '';
+  document.getElementById('edit-memo').value = r.memo || '';
+  document.getElementById('edit-modal').classList.add('show');
+}
+function closeEditModal() { document.getElementById('edit-modal').classList.remove('show'); }
+function saveEdit() {
+  const idx = parseInt(document.getElementById('edit-row-id').value);
+  archiveData[idx].person = document.getElementById('edit-person').value;
+  archiveData[idx].brand = document.getElementById('edit-brand').value;
+  archiveData[idx].material = document.getElementById('edit-material').value;
+  archiveData[idx].memo = document.getElementById('edit-memo').value;
+  saveAllToSheets();
+  renderArchive(archiveData);
+  closeEditModal();
+  showToast('수정됐어요', 'success');
+}
+
+// ── SHEETS ────────────────────────────────────────────
+async function saveToSheets(data) {
+  const sheetsUrl = localStorage.getItem('utm_sheets_url');
+  const now = new Date().toLocaleDateString('ko-KR');
+  const row = {
+    date: now,
+    person: data.person || localStorage.getItem('utm_username') || '',
+    brand: data.brand || '',
+    material: data.material || '',
+    landingUrl: data.landingUrl || '',
+    source: data.source || '',
+    medium: data.medium || '',
+    campaign: data.campaign || '',
+    content: data.content || '',
+    term: data.term || '',
+    fullUrl: data.fullUrl || '',
+    shortUrl: data.shortUrl || '',
+    memo: data.memo || ''
+  };
+  archiveData.push(row);
+  if (!sheetsUrl) return;
+  try {
+    await fetch(sheetsUrl, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'append', row })
+    });
+  } catch(e) { console.error('Sheets 저장 오류:', e); }
+}
+
+async function saveAllToSheets() {
+  const sheetsUrl = localStorage.getItem('utm_sheets_url');
+  if (!sheetsUrl) return;
+  try {
+    await fetch(sheetsUrl, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'overwrite', rows: archiveData })
+    });
+  } catch(e) { console.error('Sheets 저장 오류:', e); }
+}
+
+// ── QR ────────────────────────────────────────────────
+function openQrModal(url) {
+  document.getElementById('qr-url-text').textContent = url;
+  const encoded = encodeURIComponent(url);
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encoded}&bgcolor=1a1a1a&color=c8f135&margin=10`;
+  const img = document.getElementById('qr-img');
+  img.src = qrUrl;
+  img.onload = () => { document.getElementById('qr-loading').style.display = 'none'; img.style.display = 'block'; };
+  document.getElementById('qr-loading').style.display = 'block';
+  img.style.display = 'none';
+  document.getElementById('qr-modal').classList.add('show');
+}
+function closeQrModal() { document.getElementById('qr-modal').classList.remove('show'); }
+function downloadQR() {
+  const img = document.getElementById('qr-img');
+  const a = document.createElement('a');
+  a.download = 'qr-code.png';
+  a.href = img.src;
+  a.click();
+}
+
+// ── UTILS ─────────────────────────────────────────────
+function parseUtmUrl(url) {
+  try {
+    const u = new URL(url);
+    return {
+      source: u.searchParams.get('utm_source') || '',
+      medium: u.searchParams.get('utm_medium') || '',
+      campaign: u.searchParams.get('utm_campaign') || '',
+      content: u.searchParams.get('utm_content') || '',
+      term: u.searchParams.get('utm_term') || ''
+    };
+  } catch { return {}; }
+}
+
+function copyText(text) {
+  navigator.clipboard.writeText(text).then(() => showToast('복사됐어요', 'success'));
+}
+
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' '+type : '');
+  setTimeout(() => t.className = 'toast', 2200);
+}
+
+// ── INIT ──────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  loadSettings();
+  initParamRows();
+
+  // attach AI result input listeners
+  ['res-source','res-medium','res-campaign','res-content','res-term'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', updateAIFinalUrl);
+  });
+
+  // open settings if no name set
+  if (!localStorage.getItem('utm_username')) {
+    setTimeout(openSettings, 500);
+  }
+});
+</script>
+</body>
+</html>

@@ -1592,15 +1592,14 @@ function saveEdit() {
 // ── SHEETS ────────────────────────────────────────────
 async function saveToSheets(data) {
   const sheetsUrl = localStorage.getItem('utm_sheets_url');
-  const now = new Date().toLocaleString('ko-KR', {
-    timeZone: 'Asia/Seoul',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  }).replace(/\./g, '.').replace('  ', ' ');
+  const _d = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+  const yyyy = String(_d.getFullYear()).slice(2);
+  const mm = String(_d.getMonth() + 1).padStart(2, '0');
+  const dd = String(_d.getDate()).padStart(2, '0');
+  const hh = String(_d.getHours()).padStart(2, '0');
+  const mi = String(_d.getMinutes()).padStart(2, '0');
+  const ss = String(_d.getSeconds()).padStart(2, '0');
+  const now = `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
   const row = {
     date: now,
     person: data.person || localStorage.getItem('utm_username') || '',

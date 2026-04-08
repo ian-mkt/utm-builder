@@ -1592,7 +1592,15 @@ function saveEdit() {
 // ── SHEETS ────────────────────────────────────────────
 async function saveToSheets(data) {
   const sheetsUrl = localStorage.getItem('utm_sheets_url');
-  const now = new Date().toLocaleDateString('ko-KR');
+  const now = new Date().toLocaleString('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  }).replace(/\./g, '.').replace('  ', ' ');
   const row = {
     date: now,
     person: data.person || localStorage.getItem('utm_username') || '',

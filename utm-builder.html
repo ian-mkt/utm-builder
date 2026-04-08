@@ -1461,6 +1461,27 @@ function saveAIToArchive() {
 }
 
 // ── ARCHIVE ───────────────────────────────────────────
+function formatArchiveDate(raw) {
+  if (!raw) return '-';
+  // Already in correct format
+  if (/^\d{2}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(raw)) return raw;
+  // Parse any date string
+  try {
+    const d = new Date(raw);
+    if (isNaN(d.getTime())) return raw;
+    const kst = new Date(d.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+    const yy = String(kst.getFullYear()).slice(2);
+    const mm = String(kst.getMonth() + 1).padStart(2, '0');
+    const dd = String(kst.getDate()).padStart(2, '0');
+    const hh = String(kst.getHours()).padStart(2, '0');
+    const mi = String(kst.getMinutes()).padStart(2, '0');
+    const ss = String(kst.getSeconds()).padStart(2, '0');
+    return `${yy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+  } catch(e) {
+    return raw;
+  }
+}
+
 async function refreshArchive() {
   const sheetsUrl = localStorage.getItem('utm_sheets_url');
   if (!sheetsUrl) {
@@ -1470,7 +1491,10 @@ async function refreshArchive() {
   try {
     const res = await fetch(`${sheetsUrl}?action=get`);
     const data = await res.json();
-    archiveData = data.rows || [];
+    archiveData = (data.rows || []).map(r => ({
+      ...r,
+      date: formatArchiveDate(r.date)
+    }));
     renderArchive(archiveData);
   } catch(e) {
     renderArchive(archiveData);

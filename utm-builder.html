@@ -8,20 +8,20 @@
   @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Pretendard:wght@400;500;600&display=swap');
 
   :root {
-    --bg: #0f0f0f;
-    --surface: #1a1a1a;
-    --surface2: #222222;
-    --border: #2e2e2e;
-    --border2: #3a3a3a;
-    --text: #e8e8e8;
-    --text2: #888;
-    --text3: #555;
-    --accent: #c8f135;
-    --accent2: #a0d020;
-    --accent-dim: rgba(200, 241, 53, 0.08);
-    --accent-dim2: rgba(200, 241, 53, 0.15);
-    --red: #ff4d4d;
-    --blue: #4d9fff;
+    --bg: #f5f5f3;
+    --surface: #ffffff;
+    --surface2: #f0efed;
+    --border: #e0dedd;
+    --border2: #c8c6c4;
+    --text: #1a1a1a;
+    --text2: #555553;
+    --text3: #999896;
+    --accent: #1a7f4b;
+    --accent2: #155f38;
+    --accent-dim: rgba(26, 127, 75, 0.08);
+    --accent-dim2: rgba(26, 127, 75, 0.15);
+    --red: #d93025;
+    --blue: #1a6bb5;
     --mono: 'IBM Plex Mono', monospace;
     --sans: 'Pretendard', -apple-system, sans-serif;
     --radius: 6px;
@@ -35,63 +35,70 @@
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* STICKY NAV WRAPPER */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
   }
 
   /* HEADER */
   .header {
-    border-bottom: 1px solid var(--border);
-    padding: 0 32px;
+    padding: 0 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 52px;
-    position: sticky;
-    top: 0;
-    background: var(--bg);
-    z-index: 100;
+    height: 56px;
+    max-width: 1080px;
+    margin: 0 auto;
   }
   .header-logo {
     font-family: var(--mono);
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 500;
     color: var(--accent);
     letter-spacing: 0.05em;
   }
-  .header-logo span { color: var(--text2); }
+  .header-logo span { color: var(--text3); }
   .header-user {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 12px;
+    font-size: 14px;
     color: var(--text2);
     cursor: pointer;
   }
   .header-user:hover { color: var(--text); }
   .user-dot {
-    width: 6px; height: 6px;
+    width: 7px; height: 7px;
     border-radius: 50%;
     background: var(--accent);
   }
 
   /* TABS */
   .tabs {
-    border-bottom: 1px solid var(--border);
-    padding: 0 32px;
+    padding: 0 24px;
     display: flex;
     gap: 0;
+    max-width: 1080px;
+    margin: 0 auto;
   }
   .tab {
-    padding: 14px 20px;
-    font-size: 13px;
+    padding: 15px 24px;
+    font-size: 15px;
     font-weight: 500;
     color: var(--text3);
     cursor: pointer;
     border-bottom: 2px solid transparent;
     margin-bottom: -1px;
     transition: all 0.15s;
-    letter-spacing: 0.01em;
   }
   .tab:hover { color: var(--text2); }
   .tab.active {
@@ -100,42 +107,47 @@
   }
 
   /* MAIN */
-  .main { padding: 32px; max-width: 960px; }
+  .main {
+    padding: 36px 24px;
+    max-width: 1080px;
+    margin: 0 auto;
+    width: 100%;
+  }
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
 
   /* SECTION */
   .section-label {
     font-family: var(--mono);
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--text3);
-    letter-spacing: 0.12em;
+    letter-spacing: 0.10em;
     text-transform: uppercase;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
   }
 
   /* FORM ELEMENTS */
-  .field { margin-bottom: 16px; }
+  .field { margin-bottom: 18px; }
   .field-label {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text2);
-    margin-bottom: 6px;
-    letter-spacing: 0.02em;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
   }
   .field-label .required {
     color: var(--accent);
-    font-size: 10px;
+    font-size: 11px;
   }
   .field-label .param-tag {
     font-family: var(--mono);
     font-size: 10px;
     color: var(--text3);
     background: var(--surface2);
+    border: 1px solid var(--border);
     padding: 1px 6px;
     border-radius: 3px;
   }
@@ -147,14 +159,14 @@
     border-radius: var(--radius);
     color: var(--text);
     font-family: var(--sans);
-    font-size: 13px;
-    padding: 9px 12px;
+    font-size: 15px;
+    padding: 11px 13px;
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s;
     appearance: none;
   }
   select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23555' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
     padding-right: 32px;
@@ -164,22 +176,27 @@
     border-color: var(--accent);
     box-shadow: 0 0 0 3px var(--accent-dim);
   }
-  select option { background: var(--surface2); }
-  textarea { resize: vertical; min-height: 80px; }
+  select option { background: var(--surface); color: var(--text); }
+  textarea { resize: vertical; min-height: 88px; }
 
   /* GRID */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .main { padding: 20px 16px; }
+    .header, .tabs { padding-left: 16px; padding-right: 16px; }
+  }
 
   /* BUTTONS */
   .btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 9px 16px;
+    padding: 10px 18px;
     border-radius: var(--radius);
     font-family: var(--sans);
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     border: none;
@@ -188,7 +205,7 @@
   }
   .btn-primary {
     background: var(--accent);
-    color: #0f0f0f;
+    color: #ffffff;
   }
   .btn-primary:hover { background: var(--accent2); }
   .btn-secondary {
@@ -209,7 +226,7 @@
     border: 1px solid transparent;
   }
   .btn-danger:hover { border-color: var(--red); background: rgba(255,77,77,0.08); }
-  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-sm { padding: 6px 12px; font-size: 13px; }
 
   /* RESULT BOX */
   .result-box {
@@ -221,7 +238,7 @@
   }
   .result-url {
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 13px;
     color: var(--accent);
     word-break: break-all;
     line-height: 1.8;
@@ -229,7 +246,7 @@
     padding: 12px;
     background: var(--accent-dim);
     border-radius: var(--radius);
-    border: 1px solid rgba(200,241,53,0.2);
+    border: 1px solid rgba(26,127,75,0.2);
   }
   .result-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
@@ -240,7 +257,7 @@
     gap: 8px;
     padding: 10px 12px;
     background: var(--accent-dim);
-    border: 1px solid rgba(200,241,53,0.15);
+    border: 1px solid rgba(26,127,75,0.15);
     border-radius: var(--radius);
     margin-bottom: 8px;
   }
@@ -281,7 +298,7 @@
   /* MULTI VALUES INPUT */
   .multi-input-area {
     background: var(--surface2);
-    border: 1px dashed var(--border2);
+    border: 1px dashed var(--border);
     border-radius: var(--radius);
     padding: 10px 12px;
     margin-top: 6px;
@@ -363,7 +380,7 @@
     font-size: 10px;
     color: var(--accent);
     background: var(--accent-dim);
-    border: 1px solid rgba(200,241,53,0.25);
+    border: 1px solid rgba(26,127,75,0.25);
     padding: 3px 8px;
     border-radius: 20px;
   }
@@ -389,12 +406,12 @@
   .ai-field-row:last-child { border-bottom: none; }
   .ai-field-key {
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 13px;
     color: var(--text2);
   }
   .ai-field-val {
     font-family: var(--mono);
-    font-size: 12px;
+    font-size: 14px;
     color: var(--accent);
   }
   .ai-field-val input {
@@ -437,8 +454,8 @@
     gap: 12px;
   }
   .archive-search input {
-    width: 280px;
-    font-size: 12px;
+    width: 300px;
+    font-size: 14px;
     padding: 7px 12px;
   }
   .table-wrap {
@@ -449,32 +466,33 @@
   table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 12px;
+    font-size: 13px;
   }
   thead tr {
     background: var(--surface2);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 2px solid var(--border);
   }
   th {
     padding: 10px 12px;
     text-align: left;
     font-weight: 500;
     color: var(--text2);
-    font-size: 11px;
-    letter-spacing: 0.04em;
+    font-size: 12px;
+    letter-spacing: 0.03em;
     white-space: nowrap;
   }
   td {
-    padding: 10px 12px;
+    padding: 12px 14px;
     border-bottom: 1px solid var(--border);
     color: var(--text);
     vertical-align: middle;
+    font-size: 14px;
   }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: var(--surface); }
   .td-mono {
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text2);
     max-width: 180px;
     overflow: hidden;
@@ -483,7 +501,7 @@
   }
   .td-url {
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 12px;
     color: var(--accent);
     max-width: 200px;
     overflow: hidden;
@@ -511,14 +529,15 @@
   .modal-overlay.show { display: flex; }
   .modal {
     background: var(--surface);
-    border: 1px solid var(--border2);
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
     border-radius: var(--radius-lg);
     padding: 28px;
     width: 480px;
     max-width: 90vw;
   }
   .modal h3 {
-    font-size: 15px;
+    font-size: 17px;
     font-weight: 600;
     margin-bottom: 20px;
     color: var(--text);
@@ -556,8 +575,9 @@
     position: fixed;
     bottom: 24px;
     right: 24px;
-    background: var(--surface2);
-    border: 1px solid var(--border2);
+    background: var(--text);
+    border: 1px solid var(--text);
+    color: var(--surface) !important;
     border-radius: var(--radius);
     padding: 10px 16px;
     font-size: 13px;
@@ -569,7 +589,7 @@
     pointer-events: none;
   }
   .toast.show { transform: translateY(0); opacity: 1; }
-  .toast.success { border-color: var(--accent); color: var(--accent); }
+  .toast.success { background: var(--accent); border-color: var(--accent); color: #fff !important; }
 
   /* QR */
   .qr-wrap {
@@ -584,19 +604,20 @@
 </head>
 <body>
 
-<header class="header">
-  <div class="header-logo">UTM<span>/</span>BUILDER</div>
-  <div class="header-user" onclick="openSettings()">
-    <div class="user-dot"></div>
-    <span id="username-display">설정 필요</span>
-  </div>
-</header>
-
-<nav class="tabs">
-  <div class="tab active" onclick="switchTab(0)">UTM 추천</div>
-  <div class="tab" onclick="switchTab(1)">UTM 빌더</div>
-  <div class="tab" onclick="switchTab(2)">아카이브</div>
-</nav>
+<div class="sticky-nav">
+  <header class="header">
+    <div class="header-logo">UTM<span>/</span>BUILDER</div>
+    <div class="header-user" onclick="openSettings()">
+      <div class="user-dot"></div>
+      <span id="username-display">설정 필요</span>
+    </div>
+  </header>
+  <nav class="tabs">
+    <div class="tab active" onclick="switchTab(0)">UTM 추천</div>
+    <div class="tab" onclick="switchTab(1)">UTM 빌더</div>
+    <div class="tab" onclick="switchTab(2)">아카이브</div>
+  </nav>
+</div>
 
 <main class="main">
 
@@ -636,7 +657,7 @@
 
       <div class="field">
         <div class="field-label">랜딩 URL <span class="required">필수</span></div>
-        <input type="text" id="ai-landing-url" placeholder="https://deepdive.goorm.io">
+        <input type="text" id="ai-landing-url" placeholder="https://deepdive.goorm.io" id="b-base-url-input">
       </div>
 
       <button class="btn btn-primary" onclick="runAIRecommend()" style="width:100%; justify-content:center;">
@@ -690,8 +711,8 @@
   <div class="tab-panel" id="panel-1">
 
     <div class="field">
-      <div class="field-label">베이스 URL <span class="required">필수</span></div>
-      <input type="text" id="b-base-url" placeholder="https://deepdive.goorm.io" oninput="buildUrls()">
+      <div class="field-label">랜딩 URL <span class="required">필수</span></div>
+      <input type="text" id="b-base-url" placeholder="https://deepdive.goorm.io">
     </div>
 
     <hr class="divider">
@@ -701,7 +722,7 @@
 
     <hr class="divider">
 
-    <div style="display:flex; gap:8px; margin-bottom:24px;">
+    <div id="builder-btn-wrap" style="display:flex; gap:8px; margin-bottom:24px;">
       <button class="btn btn-primary" onclick="buildUrls()" style="flex:1; justify-content:center;">URL 생성</button>
     </div>
 
@@ -710,7 +731,6 @@
         <div class="section-label" style="margin-bottom:12px;">생성된 URL</div>
         <div id="builder-url-list"></div>
         <div class="result-actions" style="margin-top:12px;">
-          <button class="btn btn-primary" onclick="copyBuilderUrls()">전체 복사</button>
           <button class="btn btn-secondary" onclick="saveBuilderToArchive()">아카이브 저장</button>
         </div>
       </div>
@@ -724,7 +744,7 @@
         <input type="text" placeholder="검색 (캠페인, 소스, URL...)" oninput="filterArchive(this.value)">
       </div>
       <div style="display:flex; gap:8px;">
-        <button class="btn btn-ghost btn-sm" onclick="copyAllArchive()">전체 복사</button>
+        <button class="btn btn-ghost btn-sm" onclick="downloadExcel()">엑셀 다운로드</button>
         <button class="btn btn-ghost btn-sm" onclick="refreshArchive()">새로고침</button>
       </div>
     </div>
@@ -864,6 +884,30 @@ const UTM_DATA = {
   content_keyword: ['open','close','early-bird','discount','review','curriculum','apply','benefit','default']
 };
 
+// ── INPUT SANITIZER ──────────────────────────────────
+function sanitizeUtmInput(val) {
+  return val
+    .replace(/[ㄱ-ㅎㅏ-ㅣ가-힣]/g, '')  // 한글 제거
+    .toLowerCase()                          // 소문자 변환
+    .replace(/\s+/g, '-')                   // 공백 → 하이픈
+    .replace(/-+/g, '-')                    // 연속 하이픈 → 하이픈 하나
+    .replace(/^-|-$/g, '');                 // 앞뒤 하이픈 제거
+}
+
+function sanitizeOnInput(el, callback) {
+  const pos = el.selectionStart;
+  const raw = el.value;
+  const sanitized = raw
+    .replace(/[ㄱ-ㅎㅏ-ㅣ가-힣]/g, '')
+    .toLowerCase()
+    .replace(/ /g, '-');
+  if (raw !== sanitized) {
+    el.value = sanitized;
+    el.setSelectionRange(Math.min(pos, sanitized.length), Math.min(pos, sanitized.length));
+  }
+  if (callback) callback();
+}
+
 // ── STATE ─────────────────────────────────────────────
 let archiveData = [];
 let paramStates = {
@@ -927,8 +971,8 @@ function switchTab(idx) {
 }
 
 // ── SELECT BUILDER ────────────────────────────────────
-function makeSelect(data, placeholder='선택') {
-  let html = `<option value="">${placeholder}</option>`;
+function makeSelect(data) {
+  let html = ``;
   if (Array.isArray(data)) {
     data.forEach(v => html += `<option value="${v}">${v}</option>`);
   } else {
@@ -949,7 +993,7 @@ function buildSelectWithCustom(key, data) {
         <option value="__custom__">직접 입력...</option>
         ${makeSelect(data)}
       </select>
-      <input type="text" id="b-${key}" placeholder="직접 입력" oninput="buildUrls()"
+      <input type="text" id="b-${key}" placeholder="직접 입력" oninput="sanitizeOnInput(this)"
         style="display:none; margin-top:6px; width:100%;">
     </div>
   `;
@@ -958,6 +1002,9 @@ function buildSelectWithCustom(key, data) {
 function handleSelectWithCustom(key, val) {
   const input = document.getElementById(`b-${key}`);
   if (val === '__custom__') {
+    if (key === 'medium') {
+      showMediumAlert();
+    }
     input.style.display = 'block';
     input.focus();
     input.value = '';
@@ -965,7 +1012,38 @@ function handleSelectWithCustom(key, val) {
     input.style.display = 'none';
     input.value = val;
   }
-  buildUrls();
+}
+
+function showMediumAlert() {
+  // Remove existing alert if any
+  const existing = document.getElementById('medium-alert');
+  if (existing) existing.remove();
+
+  const alertHtml = `<div id="medium-alert" style="display:flex;opacity:0;transition:opacity 0.2s;align-items:flex-start;gap:12px;background:#fffbeb;border:1px solid #f59e0b;border-radius:8px;padding:14px 16px;margin-top:8px;">
+    <span style="font-size:18px;line-height:1;">⚠️</span>
+    <div style="flex:1;">
+      <div style="font-size:14px;font-weight:600;color:#92400e;margin-bottom:4px;">utm_medium 직접 입력 전 확인해주세요</div>
+      <div style="font-size:13px;color:#78350f;line-height:1.6;">utm_medium은 GA4 채널 그룹 분류의 기준이 되는 값이에요. 표준값 외의 값을 입력하면 데이터가 의도한 채널로 집계되지 않을 수 있어요. 팀과 합의된 값인지 확인 후 입력해주세요.</div>
+    </div>
+    <button onclick="closeMediumAlert()" style="background:none;border:none;cursor:pointer;color:#92400e;font-size:18px;line-height:1;padding:0;">×</button>
+  </div>`;
+
+  const fieldWrap = document.getElementById('field-wrap-medium');
+  if (fieldWrap) {
+    fieldWrap.insertAdjacentHTML('beforeend', alertHtml);
+    setTimeout(() => {
+      const el = document.getElementById('medium-alert');
+      if (el) el.style.opacity = '1';
+    }, 10);
+  }
+}
+
+function closeMediumAlert() {
+  const alertEl = document.getElementById('medium-alert');
+  if (alertEl) {
+    alertEl.style.opacity = '0';
+    setTimeout(() => { alertEl.style.display = 'none'; }, 200);
+  }
 }
 
 // ── PARAM ROWS (TAB 2) ────────────────────────────────
@@ -985,7 +1063,7 @@ function initParamRows() {
         ? buildContentInput()
         : p.data
           ? buildSelectWithCustom(p.key, p.data)
-          : `<input type="text" id="b-${p.key}" placeholder="${p.label}" oninput="buildUrls()">`;
+          : `<input type="text" id="b-${p.key}" placeholder="${p.label}" oninput="">`;
     return `
       <div class="field" id="field-wrap-${p.key}">
         <div class="field-label">
@@ -999,7 +1077,7 @@ function initParamRows() {
         <div class="multi-input-area" id="multi-${p.key}" style="display:none;">
           <div class="hint">Enter로 값 추가 — 고정 해제된 항목은 여러 값을 입력할 수 있어요</div>
           <div class="multi-tag-input" id="tags-${p.key}">
-            <input class="tag-input" placeholder="값 입력 후 Enter" onkeydown="addTag(event, '${p.key}')">
+            <input class="tag-input" placeholder="값 입력 후 Enter" oninput="sanitizeOnInput(this)" onkeydown="addTag(event, '${p.key}')">
           </div>
         </div>
       </div>`;
@@ -1008,44 +1086,48 @@ function initParamRows() {
 
 function buildCampaignInput(key) {
   return `
-    <div style="display:flex;gap:6px;align-items:center;">
-      <select id="b-camp-brand" onchange="assembleCampaign()" style="flex:1;">
-        <option value="">브랜드</option>
-        ${UTM_DATA.campaign_brand.map(v=>`<option value="${v}">${v}</option>`).join('')}
-      </select>
-      <select id="b-camp-course" onchange="assembleCampaign()" style="flex:1;">
-        <option value="">과정</option>
-        ${UTM_DATA.campaign_course.map(v=>`<option value="${v}">${v}</option>`).join('')}
-      </select>
-      <input type="text" id="b-camp-num" placeholder="기수" style="width:70px;" oninput="assembleCampaign()">
-      <select id="b-camp-promo" onchange="assembleCampaign()" style="flex:1;">
-        <option value="">프로모션</option>
-        ${UTM_DATA.campaign_promo.map(v=>`<option value="${v}">${v}</option>`).join('')}
-      </select>
+    <div id="camp-combo-area">
+      <div style="display:flex;gap:6px;align-items:center;">
+        <select id="b-camp-brand" onchange="assembleCampaign()" style="flex:1;">
+          <option value="">선택하세요</option>
+          ${UTM_DATA.campaign_brand.map(v=>`<option value="${v}">${v}</option>`).join('')}
+        </select>
+        <select id="b-camp-course" onchange="assembleCampaign()" style="flex:1;">
+          <option value="">선택하세요</option>
+          ${UTM_DATA.campaign_course.map(v=>`<option value="${v}">${v}</option>`).join('')}
+        </select>
+        <input type="text" id="b-camp-num" placeholder="기수" style="width:70px;" oninput="sanitizeOnInput(this, assembleCampaign)">
+        <select id="b-camp-promo" onchange="assembleCampaign()" style="flex:1;">
+          <option value="">선택하세요</option>
+          ${UTM_DATA.campaign_promo.map(v=>`<option value="${v}">${v}</option>`).join('')}
+        </select>
+      </div>
+      <input type="text" id="b-campaign" placeholder="조합 결과 (직접 수정 가능)" style="margin-top:6px;" oninput="sanitizeOnInput(this)">
     </div>
-    <input type="text" id="b-campaign" placeholder="조합 결과" style="margin-top:6px; background:var(--surface2);" readonly>
+
   `;
 }
+
 
 function buildContentInput() {
   return `
     <div style="display:flex;gap:6px;align-items:center;">
       <select id="b-cont-position" onchange="assembleContent()" style="flex:1;">
-        <option value="">위치-형태</option>
+        <option value="">선택하세요</option>
         <option value="__custom__">직접 입력...</option>
         ${UTM_DATA.content_position.map(v=>`<option value="${v}">${v}</option>`).join('')}
       </select>
       <select id="b-cont-keyword" onchange="assembleContent()" style="flex:1;">
-        <option value="">식별키워드</option>
+        <option value="">선택하세요</option>
         <option value="__custom__">직접 입력...</option>
         ${UTM_DATA.content_keyword.map(v=>`<option value="${v}">${v}</option>`).join('')}
       </select>
     </div>
     <div style="display:flex;gap:6px;margin-top:6px;">
-      <input type="text" id="b-cont-position-custom" placeholder="위치-형태 직접 입력" style="display:none;flex:1;" oninput="assembleContent()">
-      <input type="text" id="b-cont-keyword-custom" placeholder="식별키워드 직접 입력" style="display:none;flex:1;" oninput="assembleContent()">
+      <input type="text" id="b-cont-position-custom" placeholder="위치-형태 직접 입력" style="display:none;flex:1;" oninput="sanitizeOnInput(this, assembleContent)">
+      <input type="text" id="b-cont-keyword-custom" placeholder="식별키워드 직접 입력" style="display:none;flex:1;" oninput="sanitizeOnInput(this, assembleContent)">
     </div>
-    <input type="text" id="b-content" placeholder="조합 결과" style="margin-top:6px; background:var(--surface2);" readonly>
+    <input type="text" id="b-content" placeholder="조합 결과 (직접 수정 가능)" style="margin-top:6px;" oninput="sanitizeOnInput(this)">
   `;
 }
 
@@ -1070,7 +1152,6 @@ function assembleContent() {
   const kw = kwSel === '__custom__' ? (kwCust?.value || '') : kwSel;
   const parts = [pos, kw].filter(Boolean);
   document.getElementById('b-content').value = parts.join('_');
-  buildUrls();
 }
 
 function assembleCampaign() {
@@ -1081,7 +1162,6 @@ function assembleCampaign() {
   const parts = [brand, course, num, promo].filter(Boolean);
   const result = parts.join('_');
   document.getElementById('b-campaign').value = result;
-  buildUrls();
 }
 
 function toggleLock(key) {
@@ -1101,7 +1181,6 @@ function toggleLock(key) {
     paramStates[key].values = [];
     document.getElementById(`tags-${key}`).querySelectorAll('.tag').forEach(t => t.remove());
   }
-  buildUrls();
 }
 
 function addTag(event, key) {
@@ -1116,7 +1195,6 @@ function addTag(event, key) {
   container.insertBefore(tag, input);
   paramStates[key].values.push(val);
   input.value = '';
-  buildUrls();
 }
 
 function removeTag(el, key) {
@@ -1124,12 +1202,10 @@ function removeTag(el, key) {
   const val = tag.querySelector('span').textContent;
   paramStates[key].values = paramStates[key].values.filter(v => v !== val);
   tag.remove();
-  buildUrls();
 }
 
 function buildUrls() {
   const base = document.getElementById('b-base-url')?.value?.trim();
-  if (!base) { document.getElementById('builder-result').style.display = 'none'; return; }
 
   const getVal = (key) => {
     const selectEl = document.getElementById(`b-${key}-select`);
@@ -1137,16 +1213,30 @@ function buildUrls() {
       const val = selectEl.value;
       if (val === '__custom__') {
         const inputEl = document.getElementById(`b-${key}`);
-        return inputEl ? inputEl.value.trim() : '';
+        return inputEl ? sanitizeUtmInput(inputEl.value) : '';
       }
       return val;
     }
     const el = document.getElementById(`b-${key}`);
-    return el ? el.value.trim() : '';
+    return el ? sanitizeUtmInput(el.value) : '';
   };
 
   const source = paramStates.source.locked ? getVal('source') : null;
   const medium = paramStates.medium.locked ? getVal('medium') : null;
+
+  // Validation
+  const missing = [];
+  if (!base) missing.push('랜딩 URL');
+  if (!source) missing.push('utm_source');
+  if (!medium) missing.push('utm_medium');
+
+  if (missing.length > 0) {
+    showBuilderAlert(`필수 항목을 입력해주세요: ${missing.join(', ')}`);
+    document.getElementById('builder-result').style.display = 'none';
+    return;
+  }
+
+  hideBuilderAlert();
   const campaign = paramStates.campaign.locked ? getVal('campaign') : null;
   const content = paramStates.content.locked ? getVal('content') : null;
   const term = paramStates.term.locked ? getVal('term') : null;
@@ -1163,10 +1253,10 @@ function buildUrls() {
   const urls = generateCombinations(base, fixedParams, varParams);
 
   const listEl = document.getElementById('builder-url-list');
-  listEl.innerHTML = urls.map(u => `
+  listEl.innerHTML = urls.map((u, i) => `
     <div class="multi-url-item">
-      <div class="url-text">${u}</div>
-      <button class="btn btn-ghost btn-sm" onclick="copyText('${u.replace(/'/g, "\\'")}')">복사</button>
+      <div class="url-text" id="url-item-${i}">${u}</div>
+      <button class="btn btn-ghost btn-sm" onclick="copyText(document.getElementById('url-item-${i}').textContent)">복사</button>
     </div>`).join('');
 
   document.getElementById('builder-result').style.display = 'block';
@@ -1191,6 +1281,24 @@ function generateCombinations(base, fixed, variable) {
     const params = { ...fixed, ...varCombo };
     return buildUtmUrl(base, params);
   });
+}
+
+function showBuilderAlert(msg) {
+  let el = document.getElementById('builder-alert');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'builder-alert';
+    el.style.cssText = 'display:flex;align-items:center;gap:10px;background:#fff3f3;border:1px solid #fca5a5;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:14px;color:#991b1b;';
+    const btnWrap = document.getElementById('builder-btn-wrap');
+    if (btnWrap) btnWrap.parentNode.insertBefore(el, btnWrap);
+  }
+  el.innerHTML = `<span style="font-size:16px;">⚠️</span><span>${msg}</span>`;
+  el.style.display = 'flex';
+}
+
+function hideBuilderAlert() {
+  const el = document.getElementById('builder-alert');
+  if (el) el.style.display = 'none';
 }
 
 function buildUtmUrl(base, params) {
@@ -1289,14 +1397,21 @@ async function runAIRecommend() {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
+        max_tokens: 2000,
         system: systemPrompt,
         messages: [{ role: 'user', content: `사업구분: ${brand}\n상황: ${prompt}` }]
       })
     });
     const data = await res.json();
+    console.log('API 응답:', JSON.stringify(data));
+    if (data.error) throw new Error(`API 오류: ${data.error.message}`);
     const text = data.content?.[0]?.text || '';
-    const json = JSON.parse(text.replace(/```json|```/g, '').trim());
+    if (!text) throw new Error('응답이 비어있어요');
+    // Extract JSON from response
+    const cleaned = text.replace(/```json|```/g, '').trim();
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('JSON을 찾을 수 없어요');
+    const json = JSON.parse(jsonMatch[0]);
 
     document.getElementById('res-source').value = json.source || '';
     document.getElementById('res-medium').value = json.medium || '';
@@ -1306,7 +1421,7 @@ async function runAIRecommend() {
     updateAIFinalUrl();
     document.getElementById('ai-result').style.display = 'block';
   } catch(e) {
-    showToast('API 오류가 발생했어요. API 키를 확인해주세요');
+    showToast(`오류: ${e.message || 'API 키를 확인해주세요'}`);
     console.error(e);
   } finally {
     document.getElementById('ai-loading').classList.remove('show');
@@ -1399,10 +1514,32 @@ function filterArchive(q) {
   renderArchive(filtered);
 }
 
-function copyAllArchive() {
-  const headers = ['생성일자','만든사람','사업구분','소재명','랜딩URL','utm_source','utm_medium','utm_campaign','utm_content','utm_term','풀URL','단축URL','관리메모'];
-  const rows = archiveData.map(r => [r.date,r.person,r.brand,r.material,r.landingUrl,r.source,r.medium,r.campaign,r.content,r.term,r.fullUrl,r.shortUrl,r.memo].join('\t'));
-  copyText([headers.join('\t'), ...rows].join('\n'));
+function downloadExcel() {
+  const headers = ['생성일자','만든사람','사업구분','소재명','랜딩URL','utm_source','utm_medium','utm_campaign','utm_content','utm_term','풀 URL','단축 URL','관리메모'];
+  const rows = archiveData.map(r => [
+    r.date, r.person, r.brand, r.material, r.landingUrl,
+    r.source, r.medium, r.campaign, r.content, r.term,
+    r.fullUrl, r.shortUrl, r.memo
+  ]);
+
+  // Build CSV with BOM for Korean encoding
+  const bom = '\uFEFF';
+  const csvContent = bom + [headers, ...rows]
+    .map(row => row.map(cell => {
+      const val = (cell || '').toString().replace(/"/g, '""');
+      return `"${val}"`;
+    }).join(','))
+    .join('\n');
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const date = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = `goorm_UTM_Archive_${date}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('다운로드됐어요', 'success');
 }
 
 async function generateShortUrl(idx) {
@@ -1474,10 +1611,8 @@ async function saveToSheets(data) {
   archiveData.push(row);
   if (!sheetsUrl) return;
   try {
-    await fetch(sheetsUrl, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'append', row })
-    });
+    const params = new URLSearchParams({ data: JSON.stringify({ action: 'append', row }) });
+    await fetch(`${sheetsUrl}?${params}`, { method: 'GET', mode: 'no-cors' });
   } catch(e) { console.error('Sheets 저장 오류:', e); }
 }
 
@@ -1485,10 +1620,8 @@ async function saveAllToSheets() {
   const sheetsUrl = localStorage.getItem('utm_sheets_url');
   if (!sheetsUrl) return;
   try {
-    await fetch(sheetsUrl, {
-      method: 'POST',
-      body: JSON.stringify({ action: 'overwrite', rows: archiveData })
-    });
+    const params = new URLSearchParams({ data: JSON.stringify({ action: 'overwrite', rows: archiveData }) });
+    await fetch(`${sheetsUrl}?${params}`, { method: 'GET', mode: 'no-cors' });
   } catch(e) { console.error('Sheets 저장 오류:', e); }
 }
 
@@ -1496,7 +1629,7 @@ async function saveAllToSheets() {
 function openQrModal(url) {
   document.getElementById('qr-url-text').textContent = url;
   const encoded = encodeURIComponent(url);
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encoded}&bgcolor=1a1a1a&color=c8f135&margin=10`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encoded}&bgcolor=ffffff&color=1a7f4b&margin=10`;
   const img = document.getElementById('qr-img');
   img.src = qrUrl;
   img.onload = () => { document.getElementById('qr-loading').style.display = 'none'; img.style.display = 'block'; };

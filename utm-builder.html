@@ -60,13 +60,19 @@
     margin: 0 auto;
   }
   .header-logo {
-    font-family: var(--mono);
-    font-size: 15px;
-    font-weight: 500;
+    font-family: var(--sans);
+    font-size: 17px;
+    font-weight: 700;
     color: var(--accent);
-    letter-spacing: 0.05em;
+    letter-spacing: -0.01em;
   }
-  .header-logo span { color: var(--text3); }
+  .header-logo span {
+    color: var(--text3);
+    font-weight: 400;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    margin-left: 4px;
+  }
   .header-user {
     display: flex;
     align-items: center;
@@ -297,22 +303,22 @@
 
   /* MULTI VALUES INPUT */
   .multi-input-area {
-    background: var(--surface2);
-    border: 1px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 10px 12px;
     margin-top: 6px;
-  }
-  .multi-input-area .hint {
-    font-size: 11px;
-    color: var(--text3);
-    margin-bottom: 6px;
   }
   .multi-tag-input {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
     align-items: center;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    background: var(--surface);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .multi-tag-input:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
   }
   .tag {
     display: inline-flex;
@@ -338,10 +344,11 @@
     border: none;
     outline: none;
     font-family: var(--mono);
-    font-size: 11px;
+    font-size: 13px;
     color: var(--text);
-    width: 120px;
-    padding: 3px 0;
+    flex: 1;
+    min-width: 120px;
+    padding: 2px 0;
   }
 
   /* DIVIDER */
@@ -477,8 +484,8 @@
     text-align: left;
     font-weight: 500;
     color: var(--text2);
-    font-size: 12px;
-    letter-spacing: 0.03em;
+    font-size: 13px;
+    letter-spacing: 0.02em;
     white-space: nowrap;
   }
   td {
@@ -591,6 +598,86 @@
   .toast.show { transform: translateY(0); opacity: 1; }
   .toast.success { background: var(--accent); border-color: var(--accent); color: #fff !important; }
 
+  /* SEARCHABLE SELECT */
+  .search-select { position: relative; width: 100%; }
+  .search-select-trigger {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    padding: 11px 32px 11px 13px;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: border-color 0.15s;
+  }
+  .search-select-trigger:focus, .search-select-trigger.open {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-dim);
+    outline: none;
+  }
+  .search-select-trigger::after {
+    content: '';
+    width: 10px; height: 6px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    flex-shrink: 0;
+  }
+  .search-select-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0; right: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    z-index: 200;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  .search-select-dropdown.open { display: block; }
+  .search-select-search {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .search-select-search input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 13px;
+    background: var(--surface2);
+  }
+  .search-select-list {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  .search-select-option {
+    padding: 9px 13px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .search-select-option:hover { background: var(--surface2); }
+  .search-select-option.highlighted { background: var(--accent-dim); }
+  .ss-special { justify-content: space-between !important; }
+  .ss-special-desc { font-size: 11px; color: var(--text3); font-style: italic; }
+  .ss-group-label { padding:6px 13px 4px;font-size:11px;color:var(--text3);font-weight:600;letter-spacing:0.05em;background:var(--surface2); }
+  .search-select-option.selected { color: var(--accent); }
+  .search-select-option .opt-value {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+  }
+
   /* QR */
   .qr-wrap {
     display: flex;
@@ -606,7 +693,7 @@
 
 <div class="sticky-nav">
   <header class="header">
-    <div class="header-logo">UTM<span>/</span>BUILDER</div>
+    <div class="header-logo">UTM BUILDER <span>by Team MKT</span></div>
     <div class="header-user" onclick="openSettings()">
       <div class="user-dot"></div>
       <span id="username-display">설정 필요</span>
@@ -731,7 +818,7 @@
         <div class="section-label" style="margin-bottom:12px;">생성된 URL</div>
         <div id="builder-url-list"></div>
         <div class="result-actions" style="margin-top:12px;">
-          <button class="btn btn-secondary" onclick="saveBuilderToArchive()">아카이브 저장</button>
+          <button class="btn btn-secondary" id="builder-save-btn" onclick="saveBuilderToArchive()">아카이브 저장</button>
         </div>
       </div>
     </div>
@@ -865,42 +952,150 @@ const UTM_DATA = {
   medium: {
     'Paid Ads': ['display','display_bizboard','video','cross_pmax','cross_demandgen','vertical_mainbanner'],
     'Paid Search': ['paidsearch','brandsearch','cpc'],
-    'Partnership': ['affiliate','affiliate_lms','creator','partner'],
-    'PR': ['pr','article'],
+    'Partnership / Affiliate': ['affiliate','affiliate_lms','creator','partner'],
+    'PR / Earned Media': ['pr','article'],
     'Referral': ['referral','invite'],
-    'Viral': ['viral'],
-    'CRM': ['email','sms','alimtalk','message','push'],
+    'Viral Marketing': ['viral'],
+    'CRM & Message': ['email','sms','alimtalk','message','push'],
     'Offline': ['offline','offline_poster'],
-    'Owned': ['owned'],
+    'Owned Media': ['owned'],
     'Organic Social': ['social']
   },
-  campaign_brand: ['deepdive','goormthoninjeju','goormthon','goormthon-univ','techup','profect','edu','ide','level'],
-  campaign_course: ['fullstack','cybersecurity','informationsecurity','cloud-native','cloud-infra','cloud','gen-ai','frontend','backend','product-design','product-management','fullstack-fintech','service-design-fintech','fullstack-pt','cybersecurity-pt','informationsecurity-pt','cloud-native-pt','gen-ai-pt','frontend-pt','backend-pt','product-design-pt','product-management-pt'],
-  campaign_promo: ['early-bird','open-alarm','last-chance','discount'],
-  content_position: ['main-banner','middle-banner','search-banner','gnb-btn','floating-btn','popup-modal','blog-cta','footer-link','job-post','msg','body-btn','story','link','thumbnail','sublink','vertical','generic'],
-  content_keyword: ['open','close','early-bird','discount','review','curriculum','apply','benefit','default'],
-  term: ['tgt_retargeting','tgt_nontarget','tgt_developer','tgt_cs-major','tgt_open-alarm','tgt_kakao-friends-all','tgt_kakao-friends-recommend','tgt_goormthon-17-dev-applicant','{keyword}'],
-  content_position: ['main-banner','middle-banner','search-banner','gnb-btn','floating-btn','popup-modal','blog-cta','footer-link','job-post','msg','body-btn','story','link','thumbnail','sublink','vertical','generic'],
-  content_keyword: ['open','close','early-bird','discount','review','curriculum','apply','benefit','default']
+  campaign_brand: [
+    { label: '구름톤 딥다이브', value: 'deepdive' },
+    { label: '구름톤 인 제주', value: 'goormthon-jeju' },
+    { label: '구름톤 유니브', value: 'goormthon-univ' },
+    { label: 'KT Cloud 테크업', value: 'techup' },
+    { label: '카카오테크 부트캠프', value: 'ktb' },
+    { label: '핀테크 인턴십 코스', value: 'fintech' },
+    { label: '프로펙트', value: 'profect' },
+    { label: '광주 ICT', value: 'ict-gwangju' },
+    { label: '수도권 ICT', value: 'ict-seoul' },
+    { label: '구름 에듀', value: 'edu' },
+    { label: '구름 레벨', value: 'level' },
+    { label: '구름 뎁스', value: 'devth' },
+    { label: '구름 IDE', value: 'ide' },
+  ],
+  campaign_course: [
+    { label: '전체 (common)', value: 'common' },
+    { label: '풀스택', value: 'fullstack' },
+    { label: '프론트엔드', value: 'frontend' },
+    { label: '백엔드', value: 'backend' },
+    { label: '클라우드 네이티브', value: 'cloud-native' },
+    { label: '클라우드 인프라', value: 'cloud-infra' },
+    { label: '클라우드', value: 'cloud' },
+    { label: '생성형 AI', value: 'gen-ai' },
+    { label: '사이버 보안', value: 'cybersecurity' },
+    { label: '정보 보안', value: 'informationsecurity' },
+    { label: '프로덕트 디자인', value: 'product-design' },
+    { label: '프로덕트 매니지먼트', value: 'product-management' },
+    { label: '풀스택 (핀테크)', value: 'fullstack-fintech' },
+    { label: '서비스 기획 (핀테크)', value: 'service-design-fintech' },
+  ],
+  campaign_promo: [
+    { label: 'na (해당 없음)', value: 'na' },
+    { label: 'unset (식별 안 함)', value: 'unset' },
+    { label: 'early-bird (얼리버드)', value: 'early-bird' },
+    { label: 'open-alarm (오픈 알림 신청)', value: 'open-alarm' },
+    { label: 'last-chance (마감 임박)', value: 'last-chance' },
+    { label: 'discount (할인)', value: 'discount' },
+  ],
+  campaign_paid: [
+    { label: 'na (해당 없음)', value: 'na' },
+    { label: 'unset (식별 안 함)', value: 'unset' },
+    { label: 'click_target (클릭 타겟팅)', value: 'click_target' },
+    { label: 'conversion_nontarget (전환 논타겟팅)', value: 'conversion_nontarget' },
+    { label: 'conversion_retarget (전환 리타겟팅)', value: 'conversion_retarget' },
+    { label: 'conversion_target (전환 타겟팅)', value: 'conversion_target' },
+    { label: 'impression_target (노출 타겟팅)', value: 'impression_target' },
+    { label: 'reach_nontarget (도달 논타겟팅)', value: 'reach_nontarget' },
+    { label: 'traffic_nontarget (트래픽 논타겟팅)', value: 'traffic_nontarget' },
+    { label: 'traffic_retarget (트래픽 리타겟팅)', value: 'traffic_retarget' },
+    { label: 'traffic_similar (트래픽 유사 타겟팅)', value: 'traffic_similar' },
+    { label: 'traffic_target (트래픽 타겟팅)', value: 'traffic_target' },
+    { label: 'views_retarget (랜딩페이지 조회 리타겟팅)', value: 'views_retarget' },
+    { label: 'views_target (랜딩페이지 조회 타겟팅)', value: 'views_target' },
+    { label: 'visit_nontarget (방문 논타겟팅)', value: 'visit_nontarget' },
+    { label: 'visit_retarget (방문 리타겟팅)', value: 'visit_retarget' },
+    { label: 'visit_target (방문 타겟팅)', value: 'visit_target' },
+  ],
+  content_position: [
+    { label: 'na (해당 없음)', value: 'na' },
+    { label: 'unset (식별 안 함)', value: 'unset' },
+    { label: 'general (특정할 수 없음)', value: 'general' },
+    { label: 'main-banner (메인 배너)', value: 'main-banner' },
+    { label: 'middle-banner (미들 배너)', value: 'middle-banner' },
+    { label: 'search-banner (서치 배너)', value: 'search-banner' },
+    { label: 'gnb-btn (상단 메뉴 버튼)', value: 'gnb-btn' },
+    { label: 'floating-btn (플로팅 버튼)', value: 'floating-btn' },
+    { label: 'popup-modal (팝업/모달)', value: 'popup-modal' },
+    { label: 'blog-cta (블로그 CTA 버튼)', value: 'blog-cta' },
+    { label: 'footer-link (푸터 링크)', value: 'footer-link' },
+    { label: 'job-post (채용 공고형)', value: 'job-post' },
+    { label: 'msg (메시지 본문)', value: 'msg' },
+    { label: 'body-btn (본문 버튼)', value: 'body-btn' },
+    { label: 'story (스토리/피드)', value: 'story' },
+    { label: 'link (프로필 링크)', value: 'link' },
+    { label: 'thumbnail (썸네일)', value: 'thumbnail' },
+    { label: 'sublink (서브링크)', value: 'sublink' },
+    { label: 'main-dday (메인 디데이)', value: 'main-dday' },
+    { label: 'main-titletag (메인 타이틀 태그)', value: 'main-titletag' },
+    { label: 'education-banner (교육페이지 배너)', value: 'education-banner' },
+  ],
+  content_keyword: [
+    { label: 'na (해당 없음)', value: 'na' },
+    { label: 'unset (식별 안 함)', value: 'unset' },
+    { label: 'generic (범용 소재)', value: 'generic' },
+    { label: 'open (오픈/모집 시작)', value: 'open' },
+    { label: 'close (마감 임박)', value: 'close' },
+    { label: 'early-bird (얼리버드)', value: 'early-bird' },
+    { label: 'benefit (혜택 강조)', value: 'benefit' },
+    { label: 'review (후기)', value: 'review' },
+    { label: 'curriculum (커리큘럼)', value: 'curriculum' },
+    { label: 'apply (지원하기)', value: 'apply' },
+  ],
+  term: [
+    { label: 'tgt_retargeting (리타겟팅)', value: 'tgt_retargeting' },
+    { label: 'tgt_nontarget (논타겟)', value: 'tgt_nontarget' },
+    { label: 'tgt_developer (개발자 타겟)', value: 'tgt_developer' },
+    { label: 'tgt_cs-major (컴공 전공자)', value: 'tgt_cs-major' },
+    { label: 'tgt_open-alarm (오픈 알림 신청자)', value: 'tgt_open-alarm' },
+    { label: 'tgt_kakao-friends-all (카카오 전체 친구)', value: 'tgt_kakao-friends-all' },
+    { label: 'tgt_kakao-friends-recommend (카카오 추천 친구)', value: 'tgt_kakao-friends-recommend' },
+    { label: 'tgt_kakao-friends-custom-f2030-seoul (카카오 맞춤 20-30대 여성 서울)', value: 'tgt_kakao-friends-custom-f2030-seoul' },
+    { label: 'tgt_goormthon-17-dev-applicant (구름톤 17기 개발자 지원자)', value: 'tgt_goormthon-17-dev-applicant' },
+    { label: '{keyword} (검색광고 자동 치환)', value: '{keyword}' },
+  ],
 };
 
 // ── INPUT SANITIZER ──────────────────────────────────
 function sanitizeUtmInput(val) {
   return val
-    .replace(/[ㄱ-ㅎㅏ-ㅣ가-힣]/g, '')  // 한글 제거
-    .toLowerCase()                          // 소문자 변환
-    .replace(/\s+/g, '-')                   // 공백 → 하이픈
-    .replace(/-+/g, '-')                    // 연속 하이픈 → 하이픈 하나
-    .replace(/^-|-$/g, '');                 // 앞뒤 하이픈 제거
+    .replace(/[ㄱ-ㅎㅏ-ㅣ가-힣]/g, '')       // 한글 제거
+    .toLowerCase()                              // 소문자 변환
+    .replace(/\s+/g, '-')                       // 공백 → 하이픈
+    .replace(/[^a-z0-9\-_\.]/g, '')            // 허용 문자 외 제거 (영문 소문자, 숫자, -, _, .)
+    .replace(/-+/g, '-')                        // 연속 하이픈 → 하이픈 하나
+    .replace(/^-|-$/g, '');                     // 앞뒤 하이픈 제거
 }
 
-function sanitizeOnInput(el, callback) {
+function sanitizeNumInput(val) {
+  return val.replace(/[^0-9\-]/g, '');          // 숫자와 하이픈만 허용 (기수용)
+}
+
+function sanitizeOnInput(el, callback, type) {
   const pos = el.selectionStart;
   const raw = el.value;
-  const sanitized = raw
-    .replace(/[ㄱ-ㅎㅏ-ㅣ가-힣]/g, '')
-    .toLowerCase()
-    .replace(/ /g, '-');
+  let sanitized;
+  if (type === 'num') {
+    sanitized = sanitizeNumInput(raw);
+  } else {
+    sanitized = raw
+      .replace(/[ㄱ-ㅎㅏ-ㅣ가-힣]/g, '')
+      .toLowerCase()
+      .replace(/ /g, '-')
+      .replace(/[^a-z0-9\-_\.]/g, '');
+  }
   if (raw !== sanitized) {
     el.value = sanitized;
     el.setSelectionRange(Math.min(pos, sanitized.length), Math.min(pos, sanitized.length));
@@ -986,18 +1181,194 @@ function makeSelect(data) {
 }
 
 function buildSelectWithCustom(key, data) {
-  return `
-    <div>
-      <select id="b-${key}-select" onchange="handleSelectWithCustom('${key}', this.value)" style="width:100%">
-        <option value="">선택하세요</option>
-        <option value="__custom__">직접 입력...</option>
-        ${makeSelect(data)}
-      </select>
-      <input type="text" id="b-${key}" placeholder="직접 입력" oninput="sanitizeOnInput(this)"
-        style="display:none; margin-top:6px; width:100%;">
-    </div>
-  `;
+  const id = 'b-' + key;
+  let items = [];
+  if (Array.isArray(data)) {
+    items = data.map(v => typeof v === 'object' ? v : { label: v, value: v });
+  } else {
+    Object.entries(data).forEach(([group, vals]) => {
+      items.push({ label: group, value: '__group__', group: true });
+      vals.forEach(v => items.push({ label: v, value: v }));
+    });
+  }
+  return buildSearchSelectFull(id, items, '선택하세요', null, true, key);
 }
+
+function buildSearchSelect(id, items, placeholder, onChangeName) {
+  return buildSearchSelectFull(id, items, placeholder, onChangeName, false, null);
+}
+
+function buildSearchSelectFull(id, items, placeholder, onChangeName, withCustom, customKey) {
+  const onChangeAttr = onChangeName ? `data-onchange="${onChangeName}"` : '';
+  let itemsHtml = '';
+  if (withCustom) {
+    itemsHtml += `<div class="search-select-option ss-custom" data-value="__custom__"
+      onclick="selectSS('${id}', '__custom__')"
+      style="color:var(--accent);border-bottom:1px solid var(--border);">
+      <span>직접 입력...</span>
+    </div>`;
+  }
+  const SPECIAL_DESCS = {
+    'na': '해당 값이 존재하지 않음',
+    'unset': '의도하에 식별하지 않겠음',
+    'common': '특정 과정 외 모든 경우',
+    'general': '특정할 수 없음',
+    'generic': '언제든 쓸 수 있는 범용 소재',
+  };
+  const specialItems = items.filter(v => !v.group && SPECIAL_DESCS[v.value]);
+  const normalItems = items.filter(v => v.group || !SPECIAL_DESCS[v.value]);
+
+  if (specialItems.length > 0) {
+    specialItems.forEach(v => {
+      itemsHtml += `<div class="search-select-option ss-special" data-value="${v.value}" onclick="selectSS('${id}', '${v.value}')">
+        <span>${v.value}</span>
+        <span class="ss-special-desc">${SPECIAL_DESCS[v.value]}</span>
+      </div>`;
+    });
+    if (normalItems.length > 0) {
+      itemsHtml += `<div style="border-top:1px solid var(--border);margin:4px 0;"></div>`;
+    }
+  }
+  normalItems.forEach(v => {
+    if (v.group) {
+      itemsHtml += `<div class="ss-group-label">${v.label}</div>`;
+    } else {
+      itemsHtml += `<div class="search-select-option" data-value="${v.value}" onclick="selectSS('${id}', '${v.value}')">${v.value}</div>`;
+    }
+  });
+
+  const hiddenInput = withCustom
+    ? `<input type="text" id="${id}" placeholder="직접 입력" oninput="sanitizeOnInput(this)" style="display:none;margin-top:6px;width:100%;">`
+    : `<input type="hidden" id="${id}">`;
+
+  return `<div class="search-select" id="ss-wrap-${id}" data-onchange="${onChangeName || ''}" data-custom-key="${customKey || ''}">
+    <button type="button" class="search-select-trigger" id="ss-trigger-${id}" onclick="toggleSS('${id}')">
+      <span id="ss-label-${id}" style="color:var(--text3);">${placeholder}</span>
+    </button>
+    ${hiddenInput}
+    <div class="search-select-dropdown" id="ss-dropdown-${id}">
+      <div class="search-select-search">
+        <input type="text" placeholder=""
+          oninput="filterSS('${id}', this.value)"
+          onkeydown="keySS(event, '${id}')"
+          onclick="event.stopPropagation()">
+      </div>
+      <div class="search-select-list" id="ss-list-${id}">${itemsHtml}</div>
+    </div>
+  </div>`;
+}
+
+function toggleSS(id) {
+  const dropdown = document.getElementById('ss-dropdown-' + id);
+  const trigger = document.getElementById('ss-trigger-' + id);
+  if (!dropdown) return;
+  const isOpen = dropdown.classList.contains('open');
+  document.querySelectorAll('.search-select-dropdown.open').forEach(d => d.classList.remove('open'));
+  document.querySelectorAll('.search-select-trigger.open').forEach(t => t.classList.remove('open'));
+  if (!isOpen) {
+    // Check if dropdown would go off screen - open upward if needed
+    const rect = trigger.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom;
+    if (spaceBelow < 250) {
+      dropdown.style.top = 'auto';
+      dropdown.style.bottom = 'calc(100% + 4px)';
+    } else {
+      dropdown.style.top = 'calc(100% + 4px)';
+      dropdown.style.bottom = 'auto';
+    }
+    dropdown.classList.add('open');
+    trigger.classList.add('open');
+    const searchInput = dropdown.querySelector('input[type="text"]');
+    if (searchInput) { searchInput.value = ''; filterSS(id, ''); searchInput.focus(); }
+  }
+}
+
+function filterSS(id, query) {
+  const q = query.toLowerCase();
+  const list = document.getElementById('ss-list-' + id);
+  if (!list) return;
+  list.querySelectorAll('.search-select-option').forEach(opt => {
+    const val = (opt.dataset.value || '').toLowerCase();
+    opt.style.display = !q || val.includes(q) ? 'flex' : 'none';
+  });
+  // Hide group labels with no visible items
+  list.querySelectorAll('.ss-group-label').forEach(label => {
+    let next = label.nextElementSibling;
+    let hasVisible = false;
+    while (next && !next.classList.contains('ss-group-label')) {
+      if (next.style.display !== 'none') hasVisible = true;
+      next = next.nextElementSibling;
+    }
+    label.style.display = hasVisible ? 'block' : 'none';
+  });
+  // Auto-scroll to first visible option
+  const first = list.querySelector('.search-select-option[style*="flex"]');
+  if (first) first.scrollIntoView({ block: 'nearest' });
+}
+
+function keySS(event, id) {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    const visible = [...document.querySelectorAll('#ss-list-' + id + ' .search-select-option')]
+      .find(opt => opt.style.display !== 'none' && !opt.classList.contains('ss-custom'));
+    if (visible) {
+      selectSS(id, visible.dataset.value);
+    } else {
+      const query = event.target.value.trim();
+      if (query) selectSS(id, query);
+    }
+  } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+    event.preventDefault();
+    const opts = [...document.querySelectorAll('#ss-list-' + id + ' .search-select-option')]
+      .filter(opt => opt.style.display !== 'none' && !opt.classList.contains('ss-custom'));
+    const cur = opts.findIndex(opt => opt.classList.contains('highlighted'));
+    opts.forEach(o => o.classList.remove('highlighted'));
+    const next = event.key === 'ArrowDown'
+      ? (cur < opts.length - 1 ? cur + 1 : 0)
+      : (cur > 0 ? cur - 1 : opts.length - 1);
+    if (opts[next]) {
+      opts[next].classList.add('highlighted');
+      opts[next].scrollIntoView({ block: 'nearest' });
+    }
+  }
+}
+
+function selectSS(id, value) {
+  const wrap = document.getElementById('ss-wrap-' + id);
+  const onChangeName = wrap?.dataset.onchange || '';
+  const customKey = wrap?.dataset.customKey || '';
+
+  if (value === '__custom__') {
+    const input = document.getElementById(id);
+    const labelEl = document.getElementById('ss-label-' + id);
+    if (input) { input.style.display = 'block'; input.value = ''; input.focus(); }
+    if (labelEl) { labelEl.textContent = '직접 입력...'; labelEl.style.color = 'var(--text2)'; }
+    document.getElementById('ss-dropdown-' + id)?.classList.remove('open');
+    document.getElementById('ss-trigger-' + id)?.classList.remove('open');
+    if (customKey === 'medium') showMediumAlert();
+    return;
+  }
+
+  const labelEl = document.getElementById('ss-label-' + id);
+  const hiddenInput = document.getElementById(id);
+  if (labelEl) { labelEl.textContent = value; labelEl.style.color = 'var(--text)'; }
+  if (hiddenInput) { hiddenInput.value = value; hiddenInput.style.display = 'none'; }
+  document.getElementById('ss-dropdown-' + id)?.classList.remove('open');
+  document.getElementById('ss-trigger-' + id)?.classList.remove('open');
+  document.querySelectorAll('#ss-list-' + id + ' .search-select-option').forEach(opt => {
+    opt.classList.toggle('selected', opt.dataset.value === value);
+    opt.classList.remove('highlighted');
+  });
+  if (onChangeName && window[onChangeName]) window[onChangeName]();
+}
+
+// Close on outside click
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.search-select')) {
+    document.querySelectorAll('.search-select-dropdown.open').forEach(d => d.classList.remove('open'));
+    document.querySelectorAll('.search-select-trigger.open').forEach(t => t.classList.remove('open'));
+  }
+});
 
 function handleSelectWithCustom(key, val) {
   const input = document.getElementById(`b-${key}`);
@@ -1011,6 +1382,14 @@ function handleSelectWithCustom(key, val) {
   } else {
     input.style.display = 'none';
     input.value = val;
+  }
+}
+
+function showMediumAlertIfCustom(value) {
+  // Only show alert for truly custom values not in standard list
+  const standardVals = Object.values(UTM_DATA.medium).flat();
+  if (!standardVals.includes(value)) {
+    showMediumAlert();
   }
 }
 
@@ -1075,98 +1454,125 @@ function initParamRows() {
           <button class="lock-btn locked" id="lock-${p.key}" onclick="toggleLock('${p.key}')">고정</button>
         </div>
         <div class="multi-input-area" id="multi-${p.key}" style="display:none;">
-          <div class="hint">Enter로 값 추가 — 고정 해제된 항목은 여러 값을 입력할 수 있어요</div>
           <div class="multi-tag-input" id="tags-${p.key}">
-            <input class="tag-input" placeholder="값 입력 후 Enter" oninput="sanitizeOnInput(this)" onkeydown="addTag(event, '${p.key}')">
+            <input class="tag-input" placeholder="입력 후 Enter" onkeydown="handleTagInput(event, '${p.key}')">
           </div>
         </div>
       </div>`;
   }).join('');
 }
 
+
+function buildSearchSelect(id, items, placeholder, onChangeName) {
+  return buildSearchSelectFull(id, items, placeholder, onChangeName, false, null);
+}
+
+
+
+
+
 function buildCampaignInput(key) {
   return `
     <div id="camp-combo-area">
-      <div style="display:flex;gap:6px;align-items:center;">
-        <select id="b-camp-brand" onchange="assembleCampaign()" style="flex:1;">
-          <option value="">선택하세요</option>
-          ${UTM_DATA.campaign_brand.map(v=>`<option value="${v}">${v}</option>`).join('')}
-        </select>
-        <select id="b-camp-course" onchange="assembleCampaign()" style="flex:1;">
-          <option value="">선택하세요</option>
-          ${UTM_DATA.campaign_course.map(v=>`<option value="${v}">${v}</option>`).join('')}
-        </select>
-        <input type="text" id="b-camp-num" placeholder="기수" style="width:70px;" oninput="sanitizeOnInput(this, assembleCampaign)">
-        <select id="b-camp-promo" onchange="assembleCampaign()" style="flex:1;">
-          <option value="">선택하세요</option>
-          ${UTM_DATA.campaign_promo.map(v=>`<option value="${v}">${v}</option>`).join('')}
-        </select>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:4px;">브랜드</div>
+          ${buildSearchSelect('b-camp-brand', UTM_DATA.campaign_brand, '선택하세요', 'assembleCampaign')}
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;">
+            <span>과정</span>
+            <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;color:var(--text3);">
+              <input type="checkbox" id="b-camp-pt" onchange="assembleCampaign()" style="width:13px;height:13px;accent-color:var(--accent);">
+              시간제
+            </label>
+          </div>
+          ${buildSearchSelect('b-camp-course', UTM_DATA.campaign_course, '검색 또는 선택...', 'assembleCampaign')}
+        </div>
       </div>
-      <input type="text" id="b-campaign" placeholder="조합 결과 (직접 수정 가능)" style="margin-top:6px;" oninput="sanitizeOnInput(this)">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:4px;">기수</div>
+          <input type="text" id="b-camp-num" placeholder="예: 7 또는 2026-06" style="width:100%;" oninput="sanitizeOnInput(this, assembleCampaign, 'num')">
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:4px;">프로모션</div>
+          ${buildSearchSelect('b-camp-promo', UTM_DATA.campaign_promo, '선택하세요', 'assembleCampaign')}
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:4px;">캠페인 목표-타겟</div>
+          ${buildSearchSelect('b-camp-paid', UTM_DATA.campaign_paid, '선택하세요', 'assembleCampaign')}
+        </div>
+      </div>
+      <input type="text" id="b-campaign" placeholder="조합 결과 (직접 수정 가능)" style="margin-top:4px;" oninput="sanitizeOnInput(this)">
     </div>
-
   `;
 }
 
 
 function buildContentInput() {
   return `
-    <div style="display:flex;gap:6px;align-items:center;">
-      <select id="b-cont-position" onchange="assembleContent()" style="flex:1;">
-        <option value="">선택하세요</option>
-        <option value="__custom__">직접 입력...</option>
-        ${UTM_DATA.content_position.map(v=>`<option value="${v}">${v}</option>`).join('')}
-      </select>
-      <select id="b-cont-keyword" onchange="assembleContent()" style="flex:1;">
-        <option value="">선택하세요</option>
-        <option value="__custom__">직접 입력...</option>
-        ${UTM_DATA.content_keyword.map(v=>`<option value="${v}">${v}</option>`).join('')}
-      </select>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+      <div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:4px;">위치-형태</div>
+        ${buildSearchSelect('b-cont-position', UTM_DATA.content_position, '선택하세요', 'assembleContent')}
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:4px;">소재/소구</div>
+        ${buildSearchSelect('b-cont-keyword', UTM_DATA.content_keyword, '선택하세요', 'assembleContent')}
+      </div>
     </div>
-    <div style="display:flex;gap:6px;margin-top:6px;">
-      <input type="text" id="b-cont-position-custom" placeholder="위치-형태 직접 입력" style="display:none;flex:1;" oninput="sanitizeOnInput(this, assembleContent)">
-      <input type="text" id="b-cont-keyword-custom" placeholder="식별키워드 직접 입력" style="display:none;flex:1;" oninput="sanitizeOnInput(this, assembleContent)">
-    </div>
-    <input type="text" id="b-content" placeholder="조합 결과 (직접 수정 가능)" style="margin-top:6px;" oninput="sanitizeOnInput(this)">
+    <input type="text" id="b-content" placeholder="조합 결과 (직접 수정 가능)" style="margin-top:4px;" oninput="sanitizeOnInput(this)">
   `;
 }
 
 function assembleContent() {
-  const posSel = document.getElementById('b-cont-position')?.value || '';
-  const kwSel = document.getElementById('b-cont-keyword')?.value || '';
-  const posCust = document.getElementById('b-cont-position-custom');
-  const kwCust = document.getElementById('b-cont-keyword-custom');
-
-  if (posSel === '__custom__') {
-    posCust.style.display = 'block';
-  } else {
-    posCust.style.display = 'none';
-  }
-  if (kwSel === '__custom__') {
-    kwCust.style.display = 'block';
-  } else {
-    kwCust.style.display = 'none';
-  }
-
-  const pos = posSel === '__custom__' ? (posCust?.value || '') : posSel;
-  const kw = kwSel === '__custom__' ? (kwCust?.value || '') : kwSel;
+  const pos = document.getElementById('b-cont-position')?.value || '';
+  const kw = document.getElementById('b-cont-keyword')?.value || '';
   const parts = [pos, kw].filter(Boolean);
   document.getElementById('b-content').value = parts.join('_');
 }
 
 function assembleCampaign() {
   const brand = document.getElementById('b-camp-brand')?.value || '';
-  const course = document.getElementById('b-camp-course')?.value || '';
+  const courseBase = document.getElementById('b-camp-course')?.value || '';
+  const isPt = document.getElementById('b-camp-pt')?.checked || false;
+  const course = courseBase ? (isPt ? courseBase + '-pt' : courseBase) : '';
   const num = document.getElementById('b-camp-num')?.value || '';
   const promo = document.getElementById('b-camp-promo')?.value || '';
-  const parts = [brand, course, num, promo].filter(Boolean);
-  const result = parts.join('_');
-  document.getElementById('b-campaign').value = result;
+  const paid = document.getElementById('b-camp-paid')?.value || '';
+  const parts = [brand, course, num, promo, paid].filter(Boolean);
+  document.getElementById('b-campaign').value = parts.join('_');
+}
+
+function getVariableCount() {
+  return Object.values(paramStates).filter(s => !s.locked).length;
+}
+
+function updateLockButtons() {
+  const varCount = getVariableCount();
+  ['source','medium','campaign','content','term'].forEach(k => {
+    const btn = document.getElementById('lock-' + k);
+    if (!btn) return;
+    const isLocked = paramStates[k].locked;
+    if (isLocked && varCount >= 2) {
+      btn.disabled = true;
+      btn.style.opacity = '0.4';
+      btn.style.cursor = 'not-allowed';
+      btn.title = '가변은 최대 2개까지 설정 가능해요';
+    } else {
+      btn.disabled = false;
+      btn.style.opacity = '1';
+      btn.style.cursor = 'pointer';
+      btn.title = '';
+    }
+  });
 }
 
 function toggleLock(key) {
   const btn = document.getElementById(`lock-${key}`);
   const multiArea = document.getElementById(`multi-${key}`);
+  if (!btn || !multiArea) return;
   const isLocked = btn.classList.contains('locked');
   if (isLocked) {
     btn.classList.remove('locked');
@@ -1179,22 +1585,39 @@ function toggleLock(key) {
     multiArea.style.display = 'none';
     paramStates[key].locked = true;
     paramStates[key].values = [];
-    document.getElementById(`tags-${key}`).querySelectorAll('.tag').forEach(t => t.remove());
+    document.getElementById(`tags-${key}`)?.querySelectorAll('.tag').forEach(t => t.remove());
+  }
+  updateLockButtons();
+}
+
+function handleTagInput(event, key) {
+  const input = event.target;
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    const val = sanitizeUtmInput(input.value.trim());
+    if (!val) return;
+    const container = document.getElementById(`tags-${key}`);
+    const tag = document.createElement('div');
+    tag.className = 'tag';
+    tag.innerHTML = `<span>${val}</span><span class="remove-tag" onclick="removeTag(this, '${key}')">×</span>`;
+    container.insertBefore(tag, input);
+    paramStates[key].values.push(val);
+    input.value = '';
+  } else if (event.key === 'Backspace' && input.value === '') {
+    // Delete last tag when backspace on empty input
+    const container = document.getElementById(`tags-${key}`);
+    const tags = container.querySelectorAll('.tag');
+    if (tags.length > 0) {
+      const lastTag = tags[tags.length - 1];
+      const val = lastTag.querySelector('span').textContent;
+      paramStates[key].values = paramStates[key].values.filter(v => v !== val);
+      lastTag.remove();
+    }
   }
 }
 
 function addTag(event, key) {
-  if (event.key !== 'Enter') return;
-  const input = event.target;
-  const val = input.value.trim();
-  if (!val) return;
-  const container = document.getElementById(`tags-${key}`);
-  const tag = document.createElement('div');
-  tag.className = 'tag';
-  tag.innerHTML = `<span>${val}</span><span class="remove-tag" onclick="removeTag(this, '${key}')">×</span>`;
-  container.insertBefore(tag, input);
-  paramStates[key].values.push(val);
-  input.value = '';
+  handleTagInput(event, key);
 }
 
 function removeTag(el, key) {
@@ -1208,27 +1631,35 @@ function buildUrls() {
   const base = document.getElementById('b-base-url')?.value?.trim();
 
   const getVal = (key) => {
-    const selectEl = document.getElementById(`b-${key}-select`);
-    if (selectEl) {
-      const val = selectEl.value;
-      if (val === '__custom__') {
-        const inputEl = document.getElementById(`b-${key}`);
-        return inputEl ? sanitizeUtmInput(inputEl.value) : '';
-      }
-      return val;
+    // campaign & content use assembled text input directly
+    if (key === 'campaign') {
+      const el = document.getElementById('b-campaign');
+      return el ? el.value.trim() : '';
     }
-    const el = document.getElementById(`b-${key}`);
-    return el ? sanitizeUtmInput(el.value) : '';
+    if (key === 'content') {
+      const el = document.getElementById('b-content');
+      return el ? el.value.trim() : '';
+    }
+    // For searchable selects - check if custom text input is visible
+    const inputEl = document.getElementById(`b-${key}`);
+    if (inputEl && inputEl.type === 'text' && inputEl.style.display !== 'none') {
+      return sanitizeUtmInput(inputEl.value);
+    }
+    // Hidden input from searchable select
+    if (inputEl) return inputEl.value.trim();
+    return '';
   };
 
   const source = paramStates.source.locked ? getVal('source') : null;
   const medium = paramStates.medium.locked ? getVal('medium') : null;
 
-  // Validation
+  // Validation - 가변 상태면 값이 있는지 체크, 고정 상태면 선택됐는지 체크
   const missing = [];
   if (!base) missing.push('랜딩 URL');
-  if (!source) missing.push('utm_source');
-  if (!medium) missing.push('utm_medium');
+  if (paramStates.source.locked && !source) missing.push('utm_source');
+  else if (!paramStates.source.locked && paramStates.source.values.length === 0) missing.push('utm_source (가변 값 입력 필요)');
+  if (paramStates.medium.locked && !medium) missing.push('utm_medium');
+  else if (!paramStates.medium.locked && paramStates.medium.values.length === 0) missing.push('utm_medium (가변 값 입력 필요)');
 
   if (missing.length > 0) {
     showBuilderAlert(`필수 항목을 입력해주세요: ${missing.join(', ')}`);
@@ -1240,6 +1671,42 @@ function buildUrls() {
   const campaign = paramStates.campaign.locked ? getVal('campaign') : null;
   const content = paramStates.content.locked ? getVal('content') : null;
   const term = paramStates.term.locked ? getVal('term') : null;
+
+  // na rule check - call assemble first to ensure values are fresh
+  assembleCampaign();
+  assembleContent();
+
+  const naWarnings = [];
+  const campBrand = document.getElementById('b-camp-brand')?.value || '';
+  const campCourse = document.getElementById('b-camp-course')?.value || '';
+  const campNum = document.getElementById('b-camp-num')?.value || '';
+  const campPromo = document.getElementById('b-camp-promo')?.value || '';
+  const campPaid = document.getElementById('b-camp-paid')?.value || '';
+  const campFields = [campBrand, campCourse, campNum, campPromo, campPaid];
+  const campLabels = ['브랜드', '과정', '기수', '프로모션', '캠페인 목표-타겟'];
+
+  // If any field is filled, check for gaps
+  if (campFields.some(f => f)) {
+    campFields.forEach((f, i) => {
+      if (!f && campFields.slice(i + 1).some(v => v)) {
+        naWarnings.push(`utm_campaign ${campLabels[i]} 자리가 비어있어요`);
+      }
+    });
+  }
+
+  // content check - get from hidden inputs
+  const contPos = document.getElementById('b-cont-position')?.value || '';
+  const contKw = document.getElementById('b-cont-keyword')?.value || '';
+  if (contPos && !contKw) naWarnings.push('utm_content 소재/소구 자리가 비어있어요');
+  if (!contPos && contKw) naWarnings.push('utm_content 위치-형태 자리가 비어있어요');
+
+  if (naWarnings.length > 0) {
+    showNaWarning(naWarnings);
+    document.getElementById('builder-result').style.display = 'none';
+    return;
+  } else {
+    hideNaWarning();
+  }
 
   // Collect variable params
   const varParams = {};
@@ -1254,12 +1721,18 @@ function buildUrls() {
 
   const listEl = document.getElementById('builder-url-list');
   listEl.innerHTML = urls.map((u, i) => `
-    <div class="multi-url-item">
+    <div class="multi-url-item" id="url-row-${i}">
       <div class="url-text" id="url-item-${i}">${u}</div>
-      <button class="btn btn-ghost btn-sm" onclick="copyText(document.getElementById('url-item-${i}').textContent)">복사</button>
+      <div style="display:flex;gap:4px;flex-shrink:0;">
+        <button class="btn btn-ghost btn-sm" onclick="copyText(document.getElementById('url-item-${i}').textContent)">복사</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteBuilderUrl(${i})">삭제</button>
+      </div>
     </div>`).join('');
 
   document.getElementById('builder-result').style.display = 'block';
+  const saveBtn = document.getElementById('builder-save-btn');
+  if (saveBtn) { delete saveBtn.dataset.total; }
+  updateSaveBtn();
 }
 
 function generateCombinations(base, fixed, variable) {
@@ -1296,6 +1769,31 @@ function showBuilderAlert(msg) {
   el.style.display = 'flex';
 }
 
+function showNaWarning(warnings) {
+  let el = document.getElementById('na-warning');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'na-warning';
+    el.style.cssText = 'background:#fffbeb;border:1px solid #f59e0b;border-radius:8px;padding:12px 16px;margin-top:16px;font-size:13px;color:#78350f;line-height:1.7;';
+    const resultBox = document.querySelector('.result-box');
+    if (resultBox) resultBox.insertAdjacentElement('beforebegin', el);
+  }
+  el.innerHTML = warnings.map(w => `
+    <div style="display:flex;gap:8px;align-items:flex-start;">
+      <span>⚠️</span>
+      <div>
+        <div style="font-weight:600;margin-bottom:2px;">${w}</div>
+        <div>값이 없으면 <code style="background:rgba(0,0,0,0.06);padding:1px 5px;border-radius:3px;">na</code> · 의도적으로 식별 안 하려면 <code style="background:rgba(0,0,0,0.06);padding:1px 5px;border-radius:3px;">unset</code><br>자리를 채워야 <code style="background:rgba(0,0,0,0.06);padding:1px 5px;border-radius:3px;">_</code> 위치 기준으로 데이터 필터링이 가능해요.</div>
+      </div>
+    </div>`).join('<div style="margin:8px 0;border-top:1px solid #f59e0b;opacity:0.3;"></div>');
+  el.style.display = 'block';
+}
+
+function hideNaWarning() {
+  const el = document.getElementById('na-warning');
+  if (el) el.style.display = 'none';
+}
+
 function hideBuilderAlert() {
   const el = document.getElementById('builder-alert');
   if (el) el.style.display = 'none';
@@ -1317,6 +1815,33 @@ function copyBuilderUrls() {
   copyText(urls);
 }
 
+function deleteBuilderUrl(idx) {
+  const row = document.getElementById('url-row-' + idx);
+  if (row) row.remove();
+  updateSaveBtn();
+}
+
+function updateSaveBtn() {
+  const remaining = document.querySelectorAll('#builder-url-list .url-text').length;
+  const total = document.querySelectorAll('#builder-url-list .multi-url-item').length + 
+                document.querySelectorAll('#builder-url-list .multi-url-item[style*="display: none"]').length;
+  const btn = document.getElementById('builder-save-btn');
+  if (!btn) return;
+  const deleted = document.querySelectorAll('#builder-url-list .multi-url-item').length;
+  // Check if any were deleted by comparing with original count stored
+  const originalCount = parseInt(btn.dataset.total || deleted);
+  btn.dataset.total = btn.dataset.total || deleted;
+  if (deleted < originalCount) {
+    btn.textContent = `선택 항목 저장 (${deleted}개)`;
+    btn.classList.add('btn-primary');
+    btn.classList.remove('btn-secondary');
+  } else {
+    btn.textContent = '아카이브 저장';
+    btn.classList.remove('btn-primary');
+    btn.classList.add('btn-secondary');
+  }
+}
+
 function saveBuilderToArchive() {
   const urls = [...document.querySelectorAll('#builder-url-list .url-text')].map(el => el.textContent);
   const name = localStorage.getItem('utm_username') || '';
@@ -1326,6 +1851,9 @@ function saveBuilderToArchive() {
     const landingBase = document.getElementById('b-base-url')?.value?.trim() || '';
     saveToSheets({ ...params, fullUrl: url, landingUrl: landingBase, person: name, brand, material: '', memo: '' });
   });
+  // Reset button
+  const btn = document.getElementById('builder-save-btn');
+  if (btn) { delete btn.dataset.total; btn.textContent = '아카이브 저장'; btn.classList.remove('btn-primary'); btn.classList.add('btn-secondary'); }
   showToast(`${urls.length}개 항목을 아카이브에 저장했어요`, 'success');
 }
 
@@ -1371,9 +1899,9 @@ async function runAIRecommend() {
 프로모션: early-bird, open-alarm, last-chance, discount
 
 ## utm_content 구조
-[위치-형태]_[식별키워드]
+[위치-형태]_[소재/소구]
 위치형태: main-banner, story, link, msg, body-btn, thumbnail, job-post, popup-modal, vertical, generic
-식별키워드: open, close, early-bird, discount, review, curriculum, apply, benefit, default
+소재/소구: open, close, early-bird, discount, review, curriculum, apply, benefit, default
 
 ## utm_term 구조
 디스플레이/SNS: tgt_[타겟명] (예: tgt_retargeting, tgt_developer)

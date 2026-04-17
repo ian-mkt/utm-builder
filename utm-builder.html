@@ -1686,10 +1686,10 @@ function buildUrls() {
   const campFields = [campBrand, campCourse, campNum, campPromo, campPaid];
   const campLabels = ['브랜드', '과정', '기수', '프로모션', '캠페인 목표-타겟'];
 
-  // If any field is filled, check for gaps
+  // B방식: 하나라도 입력하면 나머지 전부 채워야 함
   if (campFields.some(f => f)) {
     campFields.forEach((f, i) => {
-      if (!f && campFields.slice(i + 1).some(v => v)) {
+      if (!f) {
         naWarnings.push(`utm_campaign ${campLabels[i]} 자리가 비어있어요`);
       }
     });
@@ -1698,8 +1698,9 @@ function buildUrls() {
   // content check - get from hidden inputs
   const contPos = document.getElementById('b-cont-position')?.value || '';
   const contKw = document.getElementById('b-cont-keyword')?.value || '';
-  if (contPos && !contKw) naWarnings.push('utm_content 소재/소구 자리가 비어있어요');
-  if (!contPos && contKw) naWarnings.push('utm_content 위치-형태 자리가 비어있어요');
+  // B방식: 하나라도 입력하면 둘 다 채워야 함
+  if ((contPos || contKw) && !contPos) naWarnings.push('utm_content 위치-형태 자리가 비어있어요');
+  if ((contPos || contKw) && !contKw) naWarnings.push('utm_content 소재/소구 자리가 비어있어요');
 
   if (naWarnings.length > 0) {
     showNaWarning(naWarnings);

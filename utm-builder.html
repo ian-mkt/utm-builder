@@ -2197,6 +2197,14 @@ async function saveAllToSheets() {
 }
 
 // ── QR ────────────────────────────────────────────────
+function openQrModal(url) {
+  document.getElementById('qr-url-text').textContent = url;
+  document.getElementById('qr-modal').dataset.url = url;
+  document.getElementById('qr-color').value = '#000000';
+  document.getElementById('qr-color-hex').value = '#000000';
+  generateQrImage(url, '#000000');
+  document.getElementById('qr-modal').classList.add('show');
+}
 function closeQrModal() { document.getElementById('qr-modal').classList.remove('show'); }
 
 async function downloadQR() {

@@ -2197,6 +2197,32 @@ async function saveAllToSheets() {
 }
 
 // ── QR ────────────────────────────────────────────────
+function generateQrImage(url, color) {
+  const encoded = encodeURIComponent(url);
+  const hex = color.replace('#', '');
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + encoded + '&bgcolor=ffffff00&color=' + hex + '&margin=10&format=png';
+  const img = document.getElementById('qr-img');
+  img.onload = () => { document.getElementById('qr-loading').style.display = 'none'; img.style.display = 'block'; };
+  img.onerror = () => { document.getElementById('qr-loading').style.display = 'none'; };
+  document.getElementById('qr-loading').style.display = 'block';
+  img.style.display = 'none';
+  img.src = qrUrl;
+}
+
+function regenerateQR() {
+  const url = document.getElementById('qr-modal').dataset.url;
+  const color = document.getElementById('qr-color').value;
+  document.getElementById('qr-color-hex').value = color;
+  generateQrImage(url, color);
+}
+
+function syncQrColor(hex) {
+  if (!/^#[0-9a-fA-F]{6}$/.test(hex)) return;
+  document.getElementById('qr-color').value = hex;
+  const url = document.getElementById('qr-modal').dataset.url;
+  generateQrImage(url, hex);
+}
+
 function openQrModal(url) {
   document.getElementById('qr-url-text').textContent = url;
   document.getElementById('qr-modal').dataset.url = url;
@@ -2205,6 +2231,7 @@ function openQrModal(url) {
   generateQrImage(url, '#000000');
   document.getElementById('qr-modal').classList.add('show');
 }
+
 function closeQrModal() { document.getElementById('qr-modal').classList.remove('show'); }
 
 async function downloadQR() {
@@ -2213,18 +2240,14 @@ async function downloadQR() {
   try {
     const res = await fetch(img.src);
     const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
+    const blobUrl = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.download = 'qr-code.png';
-    a.href = url;
+    a.href = blobUrl;
     a.click();
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(blobUrl);
   } catch(e) {
-    // fallback
-    const a = document.createElement('a');
-    a.href = img.src;
-    a.target = '_blank';
-    a.click();
+    window.open(img.src, '_blank');
   }
 }
 

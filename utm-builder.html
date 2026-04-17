@@ -2197,24 +2197,27 @@ async function saveAllToSheets() {
 }
 
 // ── QR ────────────────────────────────────────────────
-function openQrModal(url) {
-  document.getElementById('qr-url-text').textContent = url;
-  const encoded = encodeURIComponent(url);
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encoded}&bgcolor=ffffff&color=1a7f4b&margin=10`;
-  const img = document.getElementById('qr-img');
-  img.src = qrUrl;
-  img.onload = () => { document.getElementById('qr-loading').style.display = 'none'; img.style.display = 'block'; };
-  document.getElementById('qr-loading').style.display = 'block';
-  img.style.display = 'none';
-  document.getElementById('qr-modal').classList.add('show');
-}
 function closeQrModal() { document.getElementById('qr-modal').classList.remove('show'); }
-function downloadQR() {
+
+async function downloadQR() {
   const img = document.getElementById('qr-img');
-  const a = document.createElement('a');
-  a.download = 'qr-code.png';
-  a.href = img.src;
-  a.click();
+  if (!img.src) return;
+  try {
+    const res = await fetch(img.src);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.download = 'qr-code.png';
+    a.href = url;
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch(e) {
+    // fallback
+    const a = document.createElement('a');
+    a.href = img.src;
+    a.target = '_blank';
+    a.click();
+  }
 }
 
 // ── UTILS ─────────────────────────────────────────────

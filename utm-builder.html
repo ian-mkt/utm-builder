@@ -2052,7 +2052,7 @@ function renderArchive(rows) {
       <td class="td-mono">${r.term || '-'}</td>
       <td class="td-url" title="${r.fullUrl || ''}">${r.fullUrl || '-'}</td>
       <td class="td-url">${r.shortUrl ? `<a href="${r.shortUrl}" target="_blank" style="color:var(--accent);">${r.shortUrl}</a>` : '<button class="btn btn-ghost btn-sm" onclick="generateShortUrl('+i+')">생성</button>'}</td>
-      <td>${r.memo || '-'}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.memo || ''}">${r.memo || '-'}</td>
       <td class="td-actions">
         <button class="btn btn-ghost btn-sm" onclick="openEditModal(${i})">편집</button>
         <button class="btn btn-ghost btn-sm" onclick="openQrModal('${(r.fullUrl||'').replace(/'/g,"\\'")}')">QR</button>

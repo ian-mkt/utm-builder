@@ -1129,18 +1129,21 @@ function sanitizeNumInput(val) {
 }
 
 function sanitizeOnInput(el, callback, type) {
+  // 한글 조합 중이면 무시
+  if (el._composing) return;
   const pos = el.selectionStart;
   const raw = el.value;
   let sanitized;
   if (type === 'num') {
-    // 한글 먼저 제거
     sanitized = sanitizeNumInput(raw.replace(/[ㄱ-ㅎㅏ-ㅣ가-힣]/g, ''));
   } else {
     sanitized = raw
       .replace(/[ㄱ-ㅎㅏ-ㅣ가-힣]/g, '')
       .toLowerCase()
-      .replace(/ /g, '-')
-      .replace(/[^a-z0-9\-_\.]/g, '');
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9\-_\.]/g, '')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
   }
   if (raw !== sanitized) {
     el.value = sanitized;
@@ -1149,6 +1152,24 @@ function sanitizeOnInput(el, callback, type) {
   if (callback) callback();
 }
 
+// 한글 IME 조합 감지 - 모든 입력창에 적용
+document.addEventListener('compositionstart', function(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    e.target._composing = true;
+  }
+});
+document.addEventListener('compositionend', function(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    e.target._composing = false;
+    // 조합 완료 후 즉시 한글 제거
+    const el = e.target;
+    const skipIds = ['edit-memo', 'edit-material', 'utm_username', 'utm_apikey', 'utm_sheetsurl'];
+    if (skipIds.some(id => el.id === id)) return;
+    el.value = el.value.replace(/[ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');
+    el.dispatchEvent(new Event('input'));
+  }
+});
+
 // ── STATE ─────────────────────────────────────────────
 let archiveData = [];
 let paramStates = {
@@ -1156,7 +1177,8 @@ let paramStates = {
   medium: { locked: true, values: [] },
   campaign: { locked: true, values: [] },
   content: { locked: true, values: [] },
-  term: { locked: true, values: [] }
+  term: { locked: true, values: [] },
+  adgroup: { locked: true, values: [] }
 };
 
 // ── SETTINGS ──────────────────────────────────────────
@@ -1504,7 +1526,8 @@ function initParamRows() {
     { key: 'medium', label: 'utm_medium', required: true, data: UTM_DATA.medium },
     { key: 'campaign', label: 'utm_campaign', required: false, data: null },
     { key: 'content', label: 'utm_content', required: false, data: 'content' },
-    { key: 'term', label: 'utm_term', required: false, data: UTM_DATA.term }
+    { key: 'term', label: 'utm_term', required: false, data: UTM_DATA.term },
+    { key: 'adgroup', label: 'utm_adgroup', required: false, data: null }
   ];
   const container = document.getElementById('param-rows');
   container.innerHTML = params.map(p => {
@@ -1527,7 +1550,7 @@ function initParamRows() {
         </div>
         <div class="multi-input-area" id="multi-${p.key}" style="display:none;">
           <div class="multi-tag-input" id="tags-${p.key}">
-            <input class="tag-input" placeholder="입력 후 Enter" onkeydown="handleTagInput(event, '${p.key}')">
+            <input class="tag-input" placeholder="입력 후 Enter" oninput="sanitizeOnInput(this)" onkeydown="handleTagInput(event, '${p.key}')">
           </div>
         </div>
       </div>`;
@@ -1623,7 +1646,7 @@ function getVariableCount() {
 
 function updateLockButtons() {
   const varCount = getVariableCount();
-  ['source','medium','campaign','content','term'].forEach(k => {
+  ['source','medium','campaign','content','term','adgroup'].forEach(k => {
     const btn = document.getElementById('lock-' + k);
     if (!btn) return;
     const isLocked = paramStates[k].locked;
@@ -1706,19 +1729,19 @@ function buildUrls() {
     // campaign & content use assembled text input directly
     if (key === 'campaign') {
       const el = document.getElementById('b-campaign');
-      return el ? el.value.trim() : '';
+      return el ? sanitizeUtmInput(el.value.trim()) : '';
     }
     if (key === 'content') {
       const el = document.getElementById('b-content');
-      return el ? el.value.trim() : '';
+      return el ? sanitizeUtmInput(el.value.trim()) : '';
     }
     // For searchable selects - check if custom text input is visible
     const inputEl = document.getElementById(`b-${key}`);
     if (inputEl && inputEl.type === 'text' && inputEl.style.display !== 'none') {
       return sanitizeUtmInput(inputEl.value);
     }
-    // Hidden input from searchable select
-    if (inputEl) return inputEl.value.trim();
+    // Hidden input from searchable select - sanitize here too
+    if (inputEl) return sanitizeUtmInput(inputEl.value.trim());
     return '';
   };
 
@@ -1748,6 +1771,7 @@ function buildUrls() {
   const campaign = paramStates.campaign.locked ? getVal('campaign') : null;
   const content = paramStates.content.locked ? getVal('content') : null;
   const term = paramStates.term.locked ? getVal('term') : null;
+  const adgroup = paramStates.adgroup.locked ? getVal('adgroup') : null;
 
   const naWarnings = [];
   const campBrand = document.getElementById('b-camp-brand')?.value || '';
@@ -1784,13 +1808,13 @@ function buildUrls() {
 
   // Collect variable params
   const varParams = {};
-  ['source','medium','campaign','content','term'].forEach(k => {
+  ['source','medium','campaign','content','term','adgroup'].forEach(k => {
     if (!paramStates[k].locked && paramStates[k].values.length > 0) {
       varParams[k] = paramStates[k].values;
     }
   });
 
-  const fixedParams = { source, medium, campaign, content, term };
+  const fixedParams = { source, medium, campaign, content, term, adgroup };
   const urls = generateCombinations(base, fixedParams, varParams);
 
   const listEl = document.getElementById('builder-url-list');
@@ -1881,6 +1905,7 @@ function buildUtmUrl(base, params) {
   if (params.campaign) p.set('utm_campaign', params.campaign);
   if (params.content) p.set('utm_content', params.content);
   if (params.term) p.set('utm_term', params.term);
+  if (params.adgroup) p.set('utm_adgroup', params.adgroup);
   const qs = p.toString();
   return qs ? `${base}?${qs}` : base;
 }

@@ -625,12 +625,44 @@
     box-shadow: 0 0 0 3px var(--accent-dim);
     outline: none;
   }
+  .ss-clear-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text3);
+    font-size: 14px;
+    line-height: 1;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+    z-index: 2;
+  }
+  .ss-clear-btn:hover {
+    background: var(--surface2);
+    color: var(--red);
+  }
+  .search-select .ss-clear-btn[style*="display: flex"] ~ button::after,
+  .search-select .ss-clear-btn[style*="display:flex"] ~ button::after {
+    opacity: 0;
+  }
   .search-select-trigger::after {
     content: '';
     width: 10px; height: 6px;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     flex-shrink: 0;
+    transition: opacity 0.15s;
+  }
+  .search-select-trigger.has-clear::after {
+    opacity: 0;
   }
   .search-select-dropdown {
     display: none;
@@ -1089,7 +1121,11 @@ function sanitizeUtmInput(val) {
 }
 
 function sanitizeNumInput(val) {
-  return val.replace(/[^0-9\-]/g, '');          // 숫자와 하이픈만 허용 (기수용)
+  // na, unset 허용
+  if (val === 'na' || val === 'unset') return val;
+  if ('na'.startsWith(val) || 'unset'.startsWith(val)) return val;
+  // 숫자만 (정기 기수) 또는 YYYY-MM 형식 (비정기) 허용
+  return val.replace(/[^0-9\-]/g, '');
 }
 
 function sanitizeOnInput(el, callback, type) {
@@ -1097,7 +1133,8 @@ function sanitizeOnInput(el, callback, type) {
   const raw = el.value;
   let sanitized;
   if (type === 'num') {
-    sanitized = sanitizeNumInput(raw);
+    // 한글 먼저 제거
+    sanitized = sanitizeNumInput(raw.replace(/[ㄱ-ㅎㅏ-ㅣ가-힣]/g, ''));
   } else {
     sanitized = raw
       .replace(/[ㄱ-ㅎㅏ-ㅣ가-힣]/g, '')
@@ -1254,6 +1291,7 @@ function buildSearchSelectFull(id, items, placeholder, onChangeName, withCustom,
     <button type="button" class="search-select-trigger" id="ss-trigger-${id}" onclick="toggleSS('${id}')">
       <span id="ss-label-${id}" style="color:var(--text3);">${placeholder}</span>
     </button>
+    <button type="button" id="ss-clear-${id}" onclick="clearSS('${id}', event)" class="ss-clear-btn" style="display:none;">×</button>
     ${hiddenInput}
     <div class="search-select-dropdown" id="ss-dropdown-${id}">
       <div class="search-select-search">
@@ -1367,6 +1405,31 @@ function selectSS(id, value) {
   document.querySelectorAll('#ss-list-' + id + ' .search-select-option').forEach(opt => {
     opt.classList.toggle('selected', opt.dataset.value === value);
     opt.classList.remove('highlighted');
+  });
+  // Show clear button and hide arrow
+  const clearBtn = document.getElementById('ss-clear-' + id);
+  if (clearBtn) clearBtn.style.display = 'flex';
+  const trigger = document.getElementById('ss-trigger-' + id);
+  if (trigger) trigger.style.paddingRight = '32px';
+  // Hide arrow via class
+  trigger?.classList.add('has-clear');
+  if (onChangeName && window[onChangeName]) window[onChangeName]();
+}
+
+function clearSS(id, event) {
+  event.stopPropagation();
+  const labelEl = document.getElementById('ss-label-' + id);
+  const hiddenInput = document.getElementById(id);
+  const clearBtn = document.getElementById('ss-clear-' + id);
+  const wrap = document.getElementById('ss-wrap-' + id);
+  const onChangeName = wrap?.dataset.onchange || '';
+  if (labelEl) { labelEl.textContent = '선택하세요'; labelEl.style.color = 'var(--text3)'; }
+  if (hiddenInput) hiddenInput.value = '';
+  if (clearBtn) clearBtn.style.display = 'none';
+  const trigger2 = document.getElementById('ss-trigger-' + id);
+  trigger2?.classList.remove('has-clear');
+  document.querySelectorAll('#ss-list-' + id + ' .search-select-option').forEach(opt => {
+    opt.classList.remove('selected');
   });
   if (onChangeName && window[onChangeName]) window[onChangeName]();
 }

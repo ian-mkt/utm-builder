@@ -879,13 +879,14 @@
             <th>생성일자</th>
             <th>만든사람</th>
             <th>사업구분</th>
-            <th>소재명</th>
             <th>랜딩 URL</th>
             <th>utm_source</th>
             <th>utm_medium</th>
             <th>utm_campaign</th>
+            <th>소재명</th>
             <th>utm_content</th>
             <th>utm_term</th>
+            <th>utm_adgroup</th>
             <th>풀 URL</th>
             <th>단축 URL</th>
             <th>관리메모</th>
@@ -893,7 +894,7 @@
           </tr>
         </thead>
         <tbody id="archive-tbody">
-          <tr><td colspan="14"><div class="empty-state"><p>아직 저장된 URL이 없어요</p></div></td></tr>
+          <tr><td colspan="15"><div class="empty-state"><p>아직 저장된 URL이 없어요</p></div></td></tr>
         </tbody>
       </table>
     </div>
@@ -1163,7 +1164,7 @@ document.addEventListener('compositionend', function(e) {
     e.target._composing = false;
     // 조합 완료 후 즉시 한글 제거
     const el = e.target;
-    const skipIds = ['edit-memo', 'edit-material', 'utm_username', 'utm_apikey', 'utm_sheetsurl'];
+    const skipIds = ['edit-memo', 'edit-material', 'utm_username', 'utm_apikey', 'utm_sheetsurl', 'setting-name', 'edit-person'];
     if (skipIds.some(id => el.id === id)) return;
     el.value = el.value.replace(/[ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');
     el.dispatchEvent(new Event('input'));
@@ -1378,13 +1379,22 @@ function filterSS(id, query) {
 function keySS(event, id) {
   if (event.key === 'Enter') {
     event.preventDefault();
-    const visible = [...document.querySelectorAll('#ss-list-' + id + ' .search-select-option')]
-      .find(opt => opt.style.display !== 'none' && !opt.classList.contains('ss-custom'));
-    if (visible) {
-      selectSS(id, visible.dataset.value);
+    // 화살표로 highlighted된 항목이 있으면 그걸 선택
+    const highlighted = document.querySelector('#ss-list-' + id + ' .search-select-option.highlighted');
+    if (highlighted) {
+      selectSS(id, highlighted.dataset.value);
+      return;
+    }
+    const query = event.target.value.trim();
+    if (!query) return;
+    // 정확히 일치하는 값이 있을 때만 자동 선택
+    const exactMatch = [...document.querySelectorAll('#ss-list-' + id + ' .search-select-option')]
+      .find(opt => opt.style.display !== 'none' && !opt.classList.contains('ss-custom') && opt.dataset.value === query);
+    if (exactMatch) {
+      selectSS(id, exactMatch.dataset.value);
     } else {
-      const query = event.target.value.trim();
-      if (query) selectSS(id, query);
+      // 일치하는 게 없으면 직접 입력값으로 처리
+      selectSS(id, query);
     }
   } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
     event.preventDefault();
@@ -1548,11 +1558,14 @@ function initParamRows() {
           <div class="field" style="flex:1;margin-bottom:0;">${inputHtml}</div>
           <button class="lock-btn locked" id="lock-${p.key}" onclick="toggleLock('${p.key}')">고정</button>
         </div>
-        <div class="multi-input-area" id="multi-${p.key}" style="display:none;">
-          <div class="multi-tag-input" id="tags-${p.key}">
-            <input class="tag-input" placeholder="입력 후 Enter" oninput="sanitizeOnInput(this)" onkeydown="handleTagInput(event, '${p.key}')">
-          </div>
-        </div>
+        ${(p.key === 'campaign' || p.key === 'content')
+          ? `<div id="multi-${p.key}" style="display:none;"></div>`
+          : `<div class="multi-input-area" id="multi-${p.key}" style="display:none;">
+              <div class="multi-tag-input" id="tags-${p.key}">
+                <input class="tag-input" placeholder="입력 후 Enter" oninput="sanitizeOnInput(this)" onkeydown="handleTagInput(event, '${p.key}')">
+              </div>
+            </div>`
+        }
       </div>`;
   }).join('');
 }
@@ -1599,7 +1612,8 @@ function buildCampaignInput(key) {
           ${buildSearchSelect('b-camp-paid', UTM_DATA.campaign_paid, '선택하세요', 'assembleCampaign')}
         </div>
       </div>
-      <input type="text" id="b-campaign" placeholder="조합 결과 (직접 수정 가능)" style="margin-top:4px;" oninput="sanitizeOnInput(this)">
+      <input type="text" id="b-campaign" placeholder="조합 결과 — Enter로 태그 추가" style="margin-top:4px;" oninput="sanitizeOnInput(this)" onkeydown="addAssembledTag(event, 'campaign')">
+      <div id="assembled-tags-campaign" style="display:none;"></div>
     </div>
   `;
 }
@@ -1617,7 +1631,8 @@ function buildContentInput() {
         ${buildSearchSelect('b-cont-keyword', UTM_DATA.content_keyword, '선택하세요', 'assembleContent')}
       </div>
     </div>
-    <input type="text" id="b-content" placeholder="조합 결과 (직접 수정 가능)" style="margin-top:4px;" oninput="sanitizeOnInput(this)">
+    <input type="text" id="b-content" placeholder="조합 결과 — Enter로 태그 추가" style="margin-top:4px;" oninput="sanitizeOnInput(this)" onkeydown="addAssembledTag(event, 'content')">
+    <div id="assembled-tags-content" style="display:none;"></div>
   `;
 }
 
@@ -1626,6 +1641,50 @@ function assembleContent() {
   const kw = document.getElementById('b-cont-keyword')?.value || '';
   const parts = [pos, kw].filter(Boolean);
   document.getElementById('b-content').value = parts.join('_');
+}
+
+function addAssembledTag(event, key) {
+  if (event.key !== 'Enter') return;
+  const isVariable = !document.getElementById('lock-' + key)?.classList.contains('locked');
+  if (!isVariable) return;
+  event.preventDefault();
+  const input = document.getElementById('b-' + key);
+  const val = input.value.trim();
+  if (!val) return;
+  if (paramStates[key].values.includes(val)) return;
+
+  paramStates[key].values.push(val);
+  input.value = '';
+  if (key === 'campaign') assembleCampaign();
+  if (key === 'content') assembleContent();
+
+  renderAssembledTags(key);
+}
+
+function renderAssembledTags(key) {
+  const container = document.getElementById('assembled-tags-' + key);
+  if (!container) return;
+  const vals = paramStates[key].values;
+  if (vals.length === 0) { container.style.display = 'none'; return; }
+
+  container.style.display = 'flex';
+  container.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:6px;';
+  container.innerHTML = vals.map((v, i) => `
+    <div class="tag">
+      <span>${v}</span>
+      <span class="remove-tag" onclick="removeAssembledTag('${key}', ${i})">×</span>
+    </div>`).join('') +
+    (vals.length >= 2 ? `<button class="btn btn-ghost btn-sm" onclick="clearAssembledTags('${key}')" style="color:var(--red);font-size:11px;">전체 삭제</button>` : '');
+}
+
+function removeAssembledTag(key, idx) {
+  paramStates[key].values.splice(idx, 1);
+  renderAssembledTags(key);
+}
+
+function clearAssembledTags(key) {
+  paramStates[key].values = [];
+  renderAssembledTags(key);
 }
 
 function assembleCampaign() {
@@ -1669,18 +1728,32 @@ function toggleLock(key) {
   const multiArea = document.getElementById(`multi-${key}`);
   if (!btn || !multiArea) return;
   const isLocked = btn.classList.contains('locked');
+  const isAssembled = key === 'campaign' || key === 'content';
+
   if (isLocked) {
     btn.classList.remove('locked');
     btn.textContent = '가변';
-    multiArea.style.display = 'block';
     paramStates[key].locked = false;
+    if (isAssembled) {
+      // campaign/content: placeholder 변경으로 가변 모드 표시
+      const input = document.getElementById('b-' + key);
+      if (input) input.placeholder = '조합 결과 — Enter로 태그 추가';
+    } else {
+      multiArea.style.display = 'block';
+    }
   } else {
     btn.classList.add('locked');
     btn.textContent = '고정';
-    multiArea.style.display = 'none';
     paramStates[key].locked = true;
     paramStates[key].values = [];
-    document.getElementById(`tags-${key}`)?.querySelectorAll('.tag').forEach(t => t.remove());
+    if (isAssembled) {
+      const input = document.getElementById('b-' + key);
+      if (input) input.placeholder = '조합 결과 (직접 수정 가능)';
+      renderAssembledTags(key);
+    } else {
+      multiArea.style.display = 'none';
+      document.getElementById(`tags-${key}`)?.querySelectorAll('.tag').forEach(t => t.remove());
+    }
   }
   updateLockButtons();
 }
@@ -1949,7 +2022,8 @@ function saveBuilderToArchive() {
   urls.forEach(url => {
     const params = parseUtmUrl(url);
     const landingBase = document.getElementById('b-base-url')?.value?.trim() || '';
-    saveToSheets({ ...params, fullUrl: url, landingUrl: landingBase, person: name, brand, material: '', memo: '' });
+    const adgroupVal = document.getElementById('b-adgroup')?.value || '';
+    saveToSheets({ ...params, fullUrl: url, landingUrl: landingBase, person: name, brand, material: '', memo: '', adgroup: adgroupVal });
   });
   // Reset button
   const btn = document.getElementById('builder-save-btn');
@@ -2132,7 +2206,7 @@ async function refreshArchive() {
 function renderArchive(rows) {
   const tbody = document.getElementById('archive-tbody');
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="14"><div class="empty-state"><p>아직 저장된 URL이 없어요</p></div></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="15"><div class="empty-state"><p>아직 저장된 URL이 없어요</p></div></td></tr>`;
     return;
   }
   tbody.innerHTML = rows.map((r, i) => `
@@ -2140,13 +2214,14 @@ function renderArchive(rows) {
       <td class="td-mono">${r.date || '-'}</td>
       <td>${r.person || '-'}</td>
       <td><span style="font-family:var(--mono);font-size:11px;">${r.brand || '-'}</span></td>
-      <td>${r.material || '-'}</td>
       <td class="td-url" title="${r.landingUrl || ''}">${r.landingUrl || '-'}</td>
       <td class="td-mono">${r.source || '-'}</td>
       <td class="td-mono">${r.medium || '-'}</td>
       <td class="td-mono">${r.campaign || '-'}</td>
+      <td>${r.material || '-'}</td>
       <td class="td-mono">${r.content || '-'}</td>
       <td class="td-mono">${r.term || '-'}</td>
+      <td class="td-mono">${r.adgroup || '-'}</td>
       <td class="td-url" title="${r.fullUrl || ''}">${r.fullUrl || '-'}</td>
       <td class="td-url">${r.shortUrl ? `<a href="${r.shortUrl}" target="_blank" style="color:var(--accent);">${r.shortUrl}</a>` : '<button class="btn btn-ghost btn-sm" onclick="generateShortUrl('+i+')">생성</button>'}</td>
       <td title="${r.memo || ''}">${r.memo || '-'}</td>
@@ -2167,10 +2242,10 @@ function filterArchive(q) {
 }
 
 function downloadExcel() {
-  const headers = ['생성일자','만든사람','사업구분','소재명','랜딩URL','utm_source','utm_medium','utm_campaign','utm_content','utm_term','풀 URL','단축 URL','관리메모'];
+  const headers = ['생성일자','만든사람','사업구분','랜딩URL','utm_source','utm_medium','utm_campaign','소재명','utm_content','utm_term','utm_adgroup','풀 URL','단축 URL','관리메모'];
   const rows = archiveData.map(r => [
-    r.date, r.person, r.brand, r.material, r.landingUrl,
-    r.source, r.medium, r.campaign, r.content, r.term,
+    r.date, r.person, r.brand, r.landingUrl,
+    r.source, r.medium, r.campaign, r.material, r.content, r.term, r.adgroup,
     r.fullUrl, r.shortUrl, r.memo
   ]);
 
@@ -2348,7 +2423,8 @@ function parseUtmUrl(url) {
       medium: u.searchParams.get('utm_medium') || '',
       campaign: u.searchParams.get('utm_campaign') || '',
       content: u.searchParams.get('utm_content') || '',
-      term: u.searchParams.get('utm_term') || ''
+      term: u.searchParams.get('utm_term') || '',
+      adgroup: u.searchParams.get('utm_adgroup') || ''
     };
   } catch { return {}; }
 }

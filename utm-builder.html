@@ -1445,6 +1445,50 @@ function selectSS(id, value) {
   if (trigger) trigger.style.paddingRight = '32px';
   // Hide arrow via class
   trigger?.classList.add('has-clear');
+  // 가변 모드이면 태그로 추가
+  const key = id.replace('b-', '');
+  if (paramStates[key] && !paramStates[key].locked) {
+    if (!paramStates[key].values.includes(value)) {
+      paramStates[key].values.push(value);
+    }
+    // 드롭다운 선택값 초기화
+    if (hiddenInput) hiddenInput.value = '';
+    if (labelEl) { labelEl.textContent = '선택하세요'; labelEl.style.color = 'var(--text3)'; }
+    const clearBtn2 = document.getElementById('ss-clear-' + id);
+    if (clearBtn2) clearBtn2.style.display = 'none';
+    trigger?.classList.remove('has-clear');
+    // 태그 렌더링 - renderAssembledTags 또는 일반 태그 컨테이너
+    if (key === 'campaign' || key === 'content') {
+      renderAssembledTags(key);
+    } else {
+      const container = document.getElementById('tags-' + key);
+      if (container) {
+        const tagInput = container.querySelector('.tag-input');
+        container.querySelectorAll('.tag').forEach(t => t.remove());
+        container.querySelectorAll('.tag-clear-all').forEach(t => t.remove());
+        paramStates[key].values.forEach(v => {
+          const tag = document.createElement('div');
+          tag.className = 'tag';
+          tag.innerHTML = `<span>${v}</span><span class="remove-tag" onclick="removeTag(this, '${key}')">×</span>`;
+          container.insertBefore(tag, tagInput);
+        });
+        // 전체 삭제 버튼 - 3개 이상일 때
+        if (paramStates[key].values.length >= 3) {
+          const clearBtn = document.createElement('button');
+          clearBtn.className = 'btn btn-ghost btn-sm tag-clear-all';
+          clearBtn.style.cssText = 'color:var(--red);font-size:11px;';
+          clearBtn.textContent = '전체 삭제';
+          clearBtn.onclick = () => {
+            paramStates[key].values = [];
+            container.querySelectorAll('.tag').forEach(t => t.remove());
+            container.querySelectorAll('.tag-clear-all').forEach(t => t.remove());
+          };
+          container.insertBefore(clearBtn, tagInput);
+        }
+      }
+    }
+    return;
+  }
   if (onChangeName && window[onChangeName]) window[onChangeName]();
 }
 
@@ -1463,6 +1507,50 @@ function clearSS(id, event) {
   document.querySelectorAll('#ss-list-' + id + ' .search-select-option').forEach(opt => {
     opt.classList.remove('selected');
   });
+  // 가변 모드이면 태그로 추가
+  const key = id.replace('b-', '');
+  if (paramStates[key] && !paramStates[key].locked) {
+    if (!paramStates[key].values.includes(value)) {
+      paramStates[key].values.push(value);
+    }
+    // 드롭다운 선택값 초기화
+    if (hiddenInput) hiddenInput.value = '';
+    if (labelEl) { labelEl.textContent = '선택하세요'; labelEl.style.color = 'var(--text3)'; }
+    const clearBtn2 = document.getElementById('ss-clear-' + id);
+    if (clearBtn2) clearBtn2.style.display = 'none';
+    trigger?.classList.remove('has-clear');
+    // 태그 렌더링 - renderAssembledTags 또는 일반 태그 컨테이너
+    if (key === 'campaign' || key === 'content') {
+      renderAssembledTags(key);
+    } else {
+      const container = document.getElementById('tags-' + key);
+      if (container) {
+        const tagInput = container.querySelector('.tag-input');
+        container.querySelectorAll('.tag').forEach(t => t.remove());
+        container.querySelectorAll('.tag-clear-all').forEach(t => t.remove());
+        paramStates[key].values.forEach(v => {
+          const tag = document.createElement('div');
+          tag.className = 'tag';
+          tag.innerHTML = `<span>${v}</span><span class="remove-tag" onclick="removeTag(this, '${key}')">×</span>`;
+          container.insertBefore(tag, tagInput);
+        });
+        // 전체 삭제 버튼 - 3개 이상일 때
+        if (paramStates[key].values.length >= 3) {
+          const clearBtn = document.createElement('button');
+          clearBtn.className = 'btn btn-ghost btn-sm tag-clear-all';
+          clearBtn.style.cssText = 'color:var(--red);font-size:11px;';
+          clearBtn.textContent = '전체 삭제';
+          clearBtn.onclick = () => {
+            paramStates[key].values = [];
+            container.querySelectorAll('.tag').forEach(t => t.remove());
+            container.querySelectorAll('.tag-clear-all').forEach(t => t.remove());
+          };
+          container.insertBefore(clearBtn, tagInput);
+        }
+      }
+    }
+    return;
+  }
   if (onChangeName && window[onChangeName]) window[onChangeName]();
 }
 
@@ -1674,7 +1762,7 @@ function renderAssembledTags(key) {
       <span>${v}</span>
       <span class="remove-tag" onclick="removeAssembledTag('${key}', ${i})">×</span>
     </div>`).join('') +
-    (vals.length >= 2 ? `<button class="btn btn-ghost btn-sm" onclick="clearAssembledTags('${key}')" style="color:var(--red);font-size:11px;">전체 삭제</button>` : '');
+    (vals.length >= 3 ? `<button class="btn btn-ghost btn-sm" onclick="clearAssembledTags('${key}')" style="color:var(--red);font-size:11px;">전체 삭제</button>` : '');
 }
 
 function removeAssembledTag(key, idx) {
@@ -1771,6 +1859,31 @@ function handleTagInput(event, key) {
     container.insertBefore(tag, input);
     paramStates[key].values.push(val);
     input.value = '';
+    // Re-render to update 전체 삭제 button
+    const container2 = document.getElementById('tags-' + key);
+    if (container2) {
+      const tagInput2 = container2.querySelector('.tag-input');
+      container2.querySelectorAll('.tag').forEach(t => t.remove());
+      container2.querySelectorAll('.tag-clear-all').forEach(t => t.remove());
+      paramStates[key].values.forEach(v => {
+        const tag = document.createElement('div');
+        tag.className = 'tag';
+        tag.innerHTML = `<span>${v}</span><span class="remove-tag" onclick="removeTag(this, '${key}')">×</span>`;
+        container2.insertBefore(tag, tagInput2);
+      });
+      if (paramStates[key].values.length >= 3) {
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'btn btn-ghost btn-sm tag-clear-all';
+        clearBtn.style.cssText = 'color:var(--red);font-size:11px;';
+        clearBtn.textContent = '전체 삭제';
+        clearBtn.onclick = () => {
+          paramStates[key].values = [];
+          container2.querySelectorAll('.tag').forEach(t => t.remove());
+          container2.querySelectorAll('.tag-clear-all').forEach(t => t.remove());
+        };
+        container2.insertBefore(clearBtn, tagInput2);
+      }
+    }
   } else if (event.key === 'Backspace' && input.value === '') {
     // Delete last tag when backspace on empty input
     const container = document.getElementById(`tags-${key}`);

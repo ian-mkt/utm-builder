@@ -467,14 +467,32 @@
   }
   .table-wrap {
     overflow-x: auto;
+    overflow-y: auto;
+    max-height: 600px;
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-wrap thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--surface2);
   }
   table {
     width: 100%;
+    min-width: 1400px;
     border-collapse: collapse;
     font-size: 13px;
   }
+  th, td {
+    white-space: nowrap;
+  }
+  th:nth-child(7), td:nth-child(7),
+  th:nth-child(8), td:nth-child(8) { min-width: 200px; }
+  th:nth-child(10), td:nth-child(10),
+  th:nth-child(11), td:nth-child(11) { min-width: 120px; }
+  .td-url { max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   thead tr {
     background: var(--surface2);
     border-bottom: 2px solid var(--border);

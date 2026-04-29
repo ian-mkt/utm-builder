@@ -853,7 +853,8 @@
 
     <div class="field">
       <div class="field-label">랜딩 URL <span class="required">필수</span></div>
-      <input type="text" id="b-base-url" placeholder="https://deepdive.goorm.io">
+      <div id="landing-dropdown-wrap"></div>
+      <input type="hidden" id="b-base-url" value="">
     </div>
 
     <hr class="divider">
@@ -1006,13 +1007,15 @@ const UTM_DATA = {
     'Organic Social': ['instagram','facebook','youtube','linkedin','x','littly'],
     'Owned Media': ['goorm_edu','goorm_level','goorm_ide','goorm_blog','goorm_techblog'],
     'CRM': ['internal'],
-    'Partnership / Affiliate': ['boottent','linkareer','campuspick','careerly','inthiswork','shinhancard'],
-    'Viral Marketing': ['everytime','blind','okky','dcinside','incruit'],
+    'Partnership / Affiliate': ['boottent','linkareer','inthiswork','allforyoung','incruit','shinhancard'],
+    'Viral Marketing': ['everytime','blind','dcinside','careerly'],
   },
   medium: {
-    'Paid Ads': ['display','display_bizboard','video','cross_pmax','cross_demandgen','vertical_mainbanner'],
+    'Paid Ads': ['display','display_bizboard','video','cross_pmax','cross_demandgen','vertical_mainbanner','vertical_edutapbanner'],
     'Paid Search': ['paidsearch','brandsearch','cpc'],
     'Partnership / Affiliate': ['affiliate','affiliate_lms','creator','partner'],
+    'PR / Earned Media': ['pr','article'],
+    'Referral': ['referral','invite'],
     'PR / Earned Media': ['pr','article'],
     'Referral': ['referral','invite'],
     'Viral Marketing': ['viral'],
@@ -1063,21 +1066,21 @@ const UTM_DATA = {
   campaign_paid: [
     { label: 'na (해당 없음)', value: 'na' },
     { label: 'unset (식별 안 함)', value: 'unset' },
-    { label: 'click_target (클릭 타겟팅)', value: 'click_target' },
-    { label: 'conversion_nontarget (전환 논타겟팅)', value: 'conversion_nontarget' },
-    { label: 'conversion_retarget (전환 리타겟팅)', value: 'conversion_retarget' },
-    { label: 'conversion_target (전환 타겟팅)', value: 'conversion_target' },
-    { label: 'impression_target (노출 타겟팅)', value: 'impression_target' },
-    { label: 'reach_nontarget (도달 논타겟팅)', value: 'reach_nontarget' },
-    { label: 'traffic_nontarget (트래픽 논타겟팅)', value: 'traffic_nontarget' },
-    { label: 'traffic_retarget (트래픽 리타겟팅)', value: 'traffic_retarget' },
-    { label: 'traffic_similar (트래픽 유사 타겟팅)', value: 'traffic_similar' },
-    { label: 'traffic_target (트래픽 타겟팅)', value: 'traffic_target' },
-    { label: 'views_retarget (랜딩페이지 조회 리타겟팅)', value: 'views_retarget' },
-    { label: 'views_target (랜딩페이지 조회 타겟팅)', value: 'views_target' },
-    { label: 'visit_nontarget (방문 논타겟팅)', value: 'visit_nontarget' },
-    { label: 'visit_retarget (방문 리타겟팅)', value: 'visit_retarget' },
-    { label: 'visit_target (방문 타겟팅)', value: 'visit_target' },
+    { label: 'click_target (클릭 타겟)', value: 'click_target' },
+    { label: 'conversion_nontarget (전환 논타겟)', value: 'conversion_nontarget' },
+    { label: 'conversion_retarget (전환 리타겟)', value: 'conversion_retarget' },
+    { label: 'conversion_target (전환 타겟)', value: 'conversion_target' },
+    { label: 'impression_target (노출 타겟)', value: 'impression_target' },
+    { label: 'reach_nontarget (도달 논타겟)', value: 'reach_nontarget' },
+    { label: 'traffic_nontarget (트래픽 논타겟)', value: 'traffic_nontarget' },
+    { label: 'traffic_retarget (트래픽 리타겟)', value: 'traffic_retarget' },
+    { label: 'traffic_similar (트래픽 유사 타겟)', value: 'traffic_similar' },
+    { label: 'traffic_target (트래픽 타겟)', value: 'traffic_target' },
+    { label: 'views_retarget (랜딩페이지 조회 리타겟)', value: 'views_retarget' },
+    { label: 'views_target (랜딩페이지 조회 타겟)', value: 'views_target' },
+    { label: 'visit_nontarget (방문 논타겟)', value: 'visit_nontarget' },
+    { label: 'visit_retarget (방문 리타겟)', value: 'visit_retarget' },
+    { label: 'visit_target (방문 타겟)', value: 'visit_target' },
   ],
   content_position: [
     { label: 'na (해당 없음)', value: 'na' },
@@ -1094,7 +1097,7 @@ const UTM_DATA = {
     { label: 'job-post (채용 공고형)', value: 'job-post' },
     { label: 'msg (메시지 본문)', value: 'msg' },
     { label: 'body-btn (본문 버튼)', value: 'body-btn' },
-    { label: 'story (스토리/피드)', value: 'story' },
+    { label: 'story (스토리)', value: 'story' },
     { label: 'link (프로필 링크)', value: 'link' },
     { label: 'thumbnail (썸네일)', value: 'thumbnail' },
     { label: 'sublink (서브링크)', value: 'sublink' },
@@ -1114,8 +1117,42 @@ const UTM_DATA = {
     { label: 'curriculum (커리큘럼)', value: 'curriculum' },
     { label: 'apply (지원하기)', value: 'apply' },
   ],
+  landing_urls: [
+    { label: '구름톤 인 제주', value: 'https://9oormthon.goorm.io/' },
+    { label: '광주 ICT', value: 'https://ict-school.goorm.io/' },
+    { label: '수도권 ICT', value: 'https://seoul-ict.goorm.io/' },
+    { label: '딥다이브', value: 'https://deepdive.goorm.io/' },
+    { label: '딥다이브 > 백엔드', value: 'https://deepdive.goorm.io/backend' },
+    { label: '딥다이브 > 클라우드 네이티브', value: 'https://deepdive.goorm.io/cloud-native' },
+    { label: '딥다이브 > 사이버 보안', value: 'https://deepdive.goorm.io/cybersecurity' },
+    { label: '딥다이브 > 프론트엔드', value: 'https://deepdive.goorm.io/frontend' },
+    { label: '딥다이브 > 풀스택', value: 'https://deepdive.goorm.io/fullstack' },
+    { label: '딥다이브 > 생성형 AI', value: 'https://deepdive.goorm.io/gen-ai' },
+    { label: '딥다이브 > 프로덕트 디자인', value: 'https://deepdive.goorm.io/product-design' },
+    { label: '딥다이브 > 프로덕트 매니지먼트', value: 'https://deepdive.goorm.io/product-management' },
+    { label: '핀테크 인턴십', value: 'https://fintech-internship-course.goorm.io/' },
+    { label: '핀테크 인턴십 > 풀스택', value: 'https://fintech-internship-course.goorm.io/fullstack-fintech' },
+    { label: '핀테크 인턴십 > 서비스 기획', value: 'https://fintech-internship-course.goorm.io/service-design-fintech' },
+    { label: '카카오테크 부트캠프', value: 'https://kakaotechbootcamp.com/' },
+    { label: '카카오테크 부트캠프 > AI', value: 'https://kakaotechbootcamp.com/ai.html' },
+    { label: '카카오테크 부트캠프 > 클라우드', value: 'https://kakaotechbootcamp.com/cloud.html' },
+    { label: '카카오테크 부트캠프 > 풀스택', value: 'https://kakaotechbootcamp.com/fullstack.html' },
+    { label: 'KT Cloud 테크업', value: 'https://ktcloud-techup.com' },
+    { label: 'KT Cloud 테크업 > 백엔드', value: 'https://ktcloud-techup.com/backend' },
+    { label: 'KT Cloud 테크업 > 클라우드 인프라', value: 'https://ktcloud-techup.com/cloud-infra' },
+    { label: 'KT Cloud 테크업 > 클라우드 네이티브', value: 'https://ktcloud-techup.com/cloud-native' },
+    { label: 'KT Cloud 테크업 > 사이버 보안', value: 'https://ktcloud-techup.com/cybersecurity' },
+    { label: 'KT Cloud 테크업 > 프론트엔드', value: 'https://ktcloud-techup.com/frontend' },
+    { label: 'KT Cloud 테크업 > 풀스택', value: 'https://ktcloud-techup.com/fullstack' },
+    { label: 'KT Cloud 테크업 > 생성형 AI', value: 'https://ktcloud-techup.com/gen-ai' },
+    { label: 'KT Cloud 테크업 > 프로덕트 디자인', value: 'https://ktcloud-techup.com/product-design' },
+    { label: 'KT Cloud 테크업 > 프로덕트 매니지먼트', value: 'https://ktcloud-techup.com/product-management' },
+    { label: '프로펙트', value: 'https://profect.goorm.io/' },
+    { label: '프로펙트 > 풀스택', value: 'https://profect.goorm.io/fullstack' },
+    { label: '프로펙트 > 클라우드', value: 'https://profect.goorm.io/cloud' },
+  ],
   term: [
-    { label: 'tgt_retargeting (리타겟팅)', value: 'tgt_retargeting' },
+    { label: 'tgt_retarget (리타겟팅)', value: 'tgt_retarget' },
     { label: 'tgt_nontarget (논타겟)', value: 'tgt_nontarget' },
     { label: 'tgt_developer (개발자 타겟)', value: 'tgt_developer' },
     { label: 'tgt_cs-major (컴공 전공자)', value: 'tgt_cs-major' },
@@ -1636,6 +1673,14 @@ function closeMediumAlert() {
 }
 
 // ── PARAM ROWS (TAB 2) ────────────────────────────────
+function initLandingUrl() {
+  const wrap = document.getElementById('landing-dropdown-wrap');
+  if (!wrap) return;
+  wrap.innerHTML = buildSelectWithCustom('base-url', UTM_DATA.landing_urls);
+  // Override selectSearchOptionVal to update hidden b-base-url
+  const origSelect = window.selectSearchOptionVal;
+}
+
 function initParamRows() {
   const params = [
     { key: 'source', label: 'utm_source', required: true, data: UTM_DATA.source },
@@ -1924,6 +1969,11 @@ function removeTag(el, key) {
   const val = tag.querySelector('span').textContent;
   paramStates[key].values = paramStates[key].values.filter(v => v !== val);
   tag.remove();
+}
+
+function onLandingSelect() {
+  const val = document.getElementById('b-base-url')?.value || '';
+  // value already set by selectSearchOptionVal/selectSS via buildSelectWithCustom
 }
 
 function buildUrls() {
@@ -2575,6 +2625,7 @@ function showToast(msg, type='') {
 // ── INIT ──────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   loadSettings();
+  initLandingUrl();
   initParamRows();
 
   // attach AI result input listeners

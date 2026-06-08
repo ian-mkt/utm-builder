@@ -2485,8 +2485,12 @@ async function saveAllToSheets() {
   const sheetsUrl = localStorage.getItem('utm_sheets_url');
   if (!sheetsUrl) return;
   try {
-    const params = new URLSearchParams({ data: JSON.stringify({ action: 'overwrite', rows: archiveData }) });
-    await fetch(`${sheetsUrl}?${params}`, { method: 'GET', mode: 'no-cors' });
+    await fetch(sheetsUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'overwrite', rows: archiveData })
+    });
   } catch(e) { console.error('Sheets 저장 오류:', e); }
 }
 

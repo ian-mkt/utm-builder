@@ -2404,9 +2404,10 @@ async function generateShortUrl(idx) {
   const row = archiveData[idx];
   if (!row?.fullUrl) return;
   try {
-    const res = await fetch(`/.netlify/functions/isgd-proxy?url=${encodeURIComponent(row.fullUrl)}`);
-    const shortUrl = (await res.text()).trim();
-    archiveData[idx].shortUrl = shortUrl;
+    const res = await fetch(`/.netlify/functions/tinyurl-proxy?url=${encodeURIComponent(row.fullUrl)}`);
+    const text = (await res.text()).trim();
+    if (!text.startsWith('http')) throw new Error(text);
+    archiveData[idx].shortUrl = text;
     await saveToSheets({ ...row, action: 'update', rowIndex: idx });
     renderArchive(archiveData);
     showToast('단축 URL이 생성됐어요', 'success');

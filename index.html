@@ -2408,7 +2408,7 @@ async function generateShortUrl(idx) {
     const text = (await res.text()).trim();
     if (!text.startsWith('http')) throw new Error(text);
     archiveData[idx].shortUrl = text;
-    await saveToSheets({ ...row, action: 'update', rowIndex: idx });
+    await saveAllToSheets();
     renderArchive(archiveData);
     showToast('단축 URL이 생성됐어요', 'success');
   } catch(e) {

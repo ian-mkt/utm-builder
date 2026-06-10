@@ -853,7 +853,8 @@
 
     <div class="field">
       <div class="field-label">랜딩 URL <span class="required">필수</span></div>
-      <input type="text" id="b-base-url" placeholder="https://deepdive.goorm.io">
+      <div id="landing-dropdown-wrap"></div>
+      <input type="hidden" id="b-base-url" value="">
     </div>
 
     <hr class="divider">
@@ -1035,6 +1036,7 @@ const UTM_DATA = {
     { label: '구름 레벨', value: 'level' },
     { label: '구름 뎁스', value: 'devth' },
     { label: '구름 IDE', value: 'ide' },
+    { label: 'AICAMPUS', value: 'aicampus' },
   ],
   campaign_course: [
     { label: '전체 (common)', value: 'common' },
@@ -1063,21 +1065,21 @@ const UTM_DATA = {
   campaign_paid: [
     { label: 'na (해당 없음)', value: 'na' },
     { label: 'unset (식별 안 함)', value: 'unset' },
-    { label: 'click_target (클릭 타겟팅)', value: 'click_target' },
-    { label: 'conversion_nontarget (전환 논타겟팅)', value: 'conversion_nontarget' },
-    { label: 'conversion_retarget (전환 리타겟팅)', value: 'conversion_retarget' },
-    { label: 'conversion_target (전환 타겟팅)', value: 'conversion_target' },
-    { label: 'impression_target (노출 타겟팅)', value: 'impression_target' },
-    { label: 'reach_nontarget (도달 논타겟팅)', value: 'reach_nontarget' },
-    { label: 'traffic_nontarget (트래픽 논타겟팅)', value: 'traffic_nontarget' },
-    { label: 'traffic_retarget (트래픽 리타겟팅)', value: 'traffic_retarget' },
-    { label: 'traffic_similar (트래픽 유사 타겟팅)', value: 'traffic_similar' },
-    { label: 'traffic_target (트래픽 타겟팅)', value: 'traffic_target' },
-    { label: 'views_retarget (랜딩페이지 조회 리타겟팅)', value: 'views_retarget' },
-    { label: 'views_target (랜딩페이지 조회 타겟팅)', value: 'views_target' },
-    { label: 'visit_nontarget (방문 논타겟팅)', value: 'visit_nontarget' },
-    { label: 'visit_retarget (방문 리타겟팅)', value: 'visit_retarget' },
-    { label: 'visit_target (방문 타겟팅)', value: 'visit_target' },
+    { label: 'click-target (클릭 타겟팅)', value: 'click-target' },
+    { label: 'conversion-nontarget (전환 논타겟팅)', value: 'conversion-nontarget' },
+    { label: 'conversion-retarget (전환 리타겟팅)', value: 'conversion-retarget' },
+    { label: 'conversion-target (전환 타겟팅)', value: 'conversion-target' },
+    { label: 'impression-target (노출 타겟팅)', value: 'impression-target' },
+    { label: 'reach-nontarget (도달 논타겟팅)', value: 'reach-nontarget' },
+    { label: 'traffic-nontarget (트래픽 논타겟팅)', value: 'traffic-nontarget' },
+    { label: 'traffic-retarget (트래픽 리타겟팅)', value: 'traffic-retarget' },
+    { label: 'traffic-similar (트래픽 유사 타겟팅)', value: 'traffic-similar' },
+    { label: 'traffic-target (트래픽 타겟팅)', value: 'traffic-target' },
+    { label: 'views-retarget (랜딩페이지 조회 리타겟팅)', value: 'views-retarget' },
+    { label: 'views-target (랜딩페이지 조회 타겟팅)', value: 'views-target' },
+    { label: 'visit-nontarget (방문 논타겟팅)', value: 'visit-nontarget' },
+    { label: 'visit-retarget (방문 리타겟팅)', value: 'visit-retarget' },
+    { label: 'visit-target (방문 타겟팅)', value: 'visit-target' },
   ],
   content_position: [
     { label: 'na (해당 없음)', value: 'na' },
@@ -1114,6 +1116,46 @@ const UTM_DATA = {
     { label: 'curriculum (커리큘럼)', value: 'curriculum' },
     { label: 'apply (지원하기)', value: 'apply' },
   ],
+  landing_urls: [
+    { label: 'AICAMPUS', value: 'https://aicampus.goorm.io' },
+    { label: 'AICAMPUS > AI 데이터 모델', value: 'https://aicampus.goorm.io/ai-data-model' },
+    { label: 'AICAMPUS > AI 데이터 플랫폼', value: 'https://aicampus.goorm.io/ai-data-platform' },
+    { label: 'AICAMPUS > AI 인프라', value: 'https://aicampus.goorm.io/ai-infra' },
+    { label: 'AICAMPUS > AX 풀스택', value: 'https://aicampus.goorm.io/ax-fullstack' },
+    { label: 'AICAMPUS > AI 보안', value: 'https://aicampus.goorm.io/ai-security' },
+    { label: '구름톤 인 제주', value: 'https://9oormthon.goorm.io/' },
+    { label: '광주 ICT', value: 'https://ict-school.goorm.io/' },
+    { label: '수도권 ICT', value: 'https://seoul-ict.goorm.io/' },
+    { label: '딥다이브', value: 'https://deepdive.goorm.io/' },
+    { label: '딥다이브 > 백엔드', value: 'https://deepdive.goorm.io/backend' },
+    { label: '딥다이브 > 클라우드 네이티브', value: 'https://deepdive.goorm.io/cloud-native' },
+    { label: '딥다이브 > 사이버 보안', value: 'https://deepdive.goorm.io/cybersecurity' },
+    { label: '딥다이브 > 프론트엔드', value: 'https://deepdive.goorm.io/frontend' },
+    { label: '딥다이브 > 풀스택', value: 'https://deepdive.goorm.io/fullstack' },
+    { label: '딥다이브 > 생성형 AI', value: 'https://deepdive.goorm.io/gen-ai' },
+    { label: '딥다이브 > 프로덕트 디자인', value: 'https://deepdive.goorm.io/product-design' },
+    { label: '딥다이브 > 프로덕트 매니지먼트', value: 'https://deepdive.goorm.io/product-management' },
+    { label: '핀테크 인턴십', value: 'https://fintech-internship-course.goorm.io/' },
+    { label: '핀테크 인턴십 > 풀스택', value: 'https://fintech-internship-course.goorm.io/fullstack-fintech' },
+    { label: '핀테크 인턴십 > 서비스 기획', value: 'https://fintech-internship-course.goorm.io/service-design-fintech' },
+    { label: '카카오테크 부트캠프', value: 'https://kakaotechbootcamp.com/' },
+    { label: '카카오테크 부트캠프 > AI', value: 'https://kakaotechbootcamp.com/ai.html' },
+    { label: '카카오테크 부트캠프 > 클라우드', value: 'https://kakaotechbootcamp.com/cloud.html' },
+    { label: '카카오테크 부트캠프 > 풀스택', value: 'https://kakaotechbootcamp.com/fullstack.html' },
+    { label: 'KT Cloud 테크업', value: 'https://ktcloud-techup.com' },
+    { label: 'KT Cloud 테크업 > 백엔드', value: 'https://ktcloud-techup.com/backend' },
+    { label: 'KT Cloud 테크업 > 클라우드 인프라', value: 'https://ktcloud-techup.com/cloud-infra' },
+    { label: 'KT Cloud 테크업 > 클라우드 네이티브', value: 'https://ktcloud-techup.com/cloud-native' },
+    { label: 'KT Cloud 테크업 > 사이버 보안', value: 'https://ktcloud-techup.com/cybersecurity' },
+    { label: 'KT Cloud 테크업 > 프론트엔드', value: 'https://ktcloud-techup.com/frontend' },
+    { label: 'KT Cloud 테크업 > 풀스택', value: 'https://ktcloud-techup.com/fullstack' },
+    { label: 'KT Cloud 테크업 > 생성형 AI', value: 'https://ktcloud-techup.com/gen-ai' },
+    { label: 'KT Cloud 테크업 > 프로덕트 디자인', value: 'https://ktcloud-techup.com/product-design' },
+    { label: 'KT Cloud 테크업 > 프로덕트 매니지먼트', value: 'https://ktcloud-techup.com/product-management' },
+    { label: '프로펙트', value: 'https://profect.goorm.io/' },
+    { label: '프로펙트 > 풀스택', value: 'https://profect.goorm.io/fullstack' },
+    { label: '프로펙트 > 클라우드', value: 'https://profect.goorm.io/cloud' },
+  ],
   term: [
     { label: 'tgt_retargeting (리타겟팅)', value: 'tgt_retargeting' },
     { label: 'tgt_nontarget (논타겟)', value: 'tgt_nontarget' },
@@ -1148,6 +1190,8 @@ function sanitizeNumInput(val) {
 }
 
 function sanitizeOnInput(el, callback, type) {
+  // 랜딩 URL 직접 입력은 sanitize 건너뜀
+  if (el.id === 'b-base-url') return;
   // 한글 조합 중이면 무시
   if (el._composing) return;
   const pos = el.selectionStart;
@@ -1182,7 +1226,7 @@ document.addEventListener('compositionend', function(e) {
     e.target._composing = false;
     // 조합 완료 후 즉시 한글 제거
     const el = e.target;
-    const skipIds = ['edit-memo', 'edit-material', 'utm_username', 'utm_apikey', 'utm_sheetsurl', 'setting-name', 'edit-person', 'ai-prompt'];
+    const skipIds = ['edit-memo', 'edit-material', 'utm_username', 'utm_apikey', 'utm_sheetsurl', 'setting-name', 'edit-person', 'ai-prompt', 'b-content', 'b-campaign', 'b-base-url'];
     if (skipIds.some(id => el.id === id)) return;
     el.value = el.value.replace(/[ㄱ-ㅎㅏ-ㅣ가-힣]/g, '');
     el.dispatchEvent(new Event('input'));
@@ -2579,6 +2623,12 @@ function showToast(msg, type='') {
 document.addEventListener('DOMContentLoaded', () => {
   loadSettings();
   initParamRows();
+
+  // 랜딩 URL 드롭다운 초기화
+  const landingWrap = document.getElementById('landing-dropdown-wrap');
+  if (landingWrap) {
+    landingWrap.innerHTML = buildSelectWithCustom('base-url', UTM_DATA.landing_urls);
+  }
 
   // attach AI result input listeners
   ['res-source','res-medium','res-campaign','res-content','res-term'].forEach(id => {

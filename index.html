@@ -2210,17 +2210,20 @@ async function saveBuilderToArchive() {
   const mi = String(_d.getMinutes()).padStart(2, '0');
   const ss = String(_d.getSeconds()).padStart(2, '0');
   const now = `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+  const newRows = [];
   urls.forEach(url => {
     const params = parseUtmUrl(url);
-    archiveData.push({
+    const row = {
       date: now, person: name, brand, landingUrl: landingBase,
       source: params.source || '', medium: params.medium || '',
       campaign: params.campaign || '', material: '',
       content: params.content || '', term: params.term || '',
       adgroup: adgroupVal, fullUrl: url, shortUrl: '', memo: ''
-    });
+    };
+    archiveData.push(row);
+    newRows.push(row);
   });
-  await saveAllToSheets();
+  await appendBatchToSheets(newRows);
   // Reset button
   const btn = document.getElementById('builder-save-btn');
   if (btn) { delete btn.dataset.total; btn.textContent = '아카이브 저장'; btn.classList.remove('btn-primary'); btn.classList.add('btn-secondary'); }
@@ -2544,6 +2547,19 @@ async function saveToSheets(data) {
   try {
     const params = new URLSearchParams({ data: JSON.stringify({ action: 'append', row }) });
     await fetch(`${sheetsUrl}?${params}`, { method: 'GET', mode: 'no-cors' });
+  } catch(e) { console.error('Sheets 저장 오류:', e); }
+}
+
+async function appendBatchToSheets(rows) {
+  const sheetsUrl = localStorage.getItem('utm_sheets_url');
+  if (!sheetsUrl || !rows.length) return;
+  try {
+    await fetch(sheetsUrl, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'append_batch', rows })
+    });
   } catch(e) { console.error('Sheets 저장 오류:', e); }
 }
 

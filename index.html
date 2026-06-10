@@ -2190,16 +2190,31 @@ function updateSaveBtn() {
   }
 }
 
-function saveBuilderToArchive() {
+async function saveBuilderToArchive() {
   const urls = [...document.querySelectorAll('#builder-url-list .url-text')].map(el => el.textContent);
   const name = localStorage.getItem('utm_username') || '';
   const brand = document.getElementById('b-camp-brand')?.value || '';
+  const landingBase = document.getElementById('b-base-url')?.value?.trim() || '';
+  const adgroupVal = document.getElementById('b-adgroup')?.value || '';
+  const _d = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
+  const yyyy = String(_d.getFullYear()).slice(2);
+  const mm = String(_d.getMonth() + 1).padStart(2, '0');
+  const dd = String(_d.getDate()).padStart(2, '0');
+  const hh = String(_d.getHours()).padStart(2, '0');
+  const mi = String(_d.getMinutes()).padStart(2, '0');
+  const ss = String(_d.getSeconds()).padStart(2, '0');
+  const now = `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
   urls.forEach(url => {
     const params = parseUtmUrl(url);
-    const landingBase = document.getElementById('b-base-url')?.value?.trim() || '';
-    const adgroupVal = document.getElementById('b-adgroup')?.value || '';
-    saveToSheets({ ...params, fullUrl: url, landingUrl: landingBase, person: name, brand, material: '', memo: '', adgroup: adgroupVal });
+    archiveData.push({
+      date: now, person: name, brand, landingUrl: landingBase,
+      source: params.source || '', medium: params.medium || '',
+      campaign: params.campaign || '', material: '',
+      content: params.content || '', term: params.term || '',
+      adgroup: adgroupVal, fullUrl: url, shortUrl: '', memo: ''
+    });
   });
+  await saveAllToSheets();
   // Reset button
   const btn = document.getElementById('builder-save-btn');
   if (btn) { delete btn.dataset.total; btn.textContent = '아카이브 저장'; btn.classList.remove('btn-primary'); btn.classList.add('btn-secondary'); }

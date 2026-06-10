@@ -1235,6 +1235,7 @@ document.addEventListener('compositionend', function(e) {
 
 // ── STATE ─────────────────────────────────────────────
 let archiveData = [];
+let archiveLoaded = false;
 let paramStates = {
   source: { locked: true, values: [] },
   medium: { locked: true, values: [] },
@@ -2387,6 +2388,7 @@ async function refreshArchive() {
       ...r,
       date: formatArchiveDate(r.date)
     }));
+    archiveLoaded = true;
     renderArchive(archiveData);
   } catch(e) {
     renderArchive(archiveData);
@@ -2540,7 +2542,26 @@ async function saveToSheets(data) {
   } catch(e) { console.error('Sheets 저장 오류:', e); }
 }
 
+async function ensureArchiveLoaded() {
+  if (archiveLoaded) return;
+  const sheetsUrl = localStorage.getItem('utm_sheets_url');
+  if (!sheetsUrl) return;
+  try {
+    const res = await fetch(`${sheetsUrl}?action=get`);
+    const data = await res.json();
+    const existing = (data.rows || []).map(r => ({
+      ...r,
+      date: formatArchiveDate(r.date)
+    }));
+    // 기존 시트 데이터 앞에 붙이고, 새로 추가된 항목은 뒤에 유지
+    const newItems = [...archiveData];
+    archiveData = [...existing, ...newItems];
+    archiveLoaded = true;
+  } catch(e) { console.error('아카이브 로드 오류:', e); }
+}
+
 async function saveAllToSheets() {
+  await ensureArchiveLoaded();
   const sheetsUrl = localStorage.getItem('utm_sheets_url');
   if (!sheetsUrl) return;
   try {
